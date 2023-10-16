@@ -1,0 +1,6 @@
+kivy==2.2.1
+kivymd==1.1.1
+kaki==0.1.8
+watchdog==3.0.0
+pytest==7.4.2
+coverage==7.3.1
