@@ -9,9 +9,6 @@ from functools import partial
 from elements.attempt import Attempt
 from elements.elements import SourcePicture, TargetPicture
 import logging
-import time
-
-from elements.enum.hiterror import HitError
 
 
 def get_position(wid):
@@ -102,16 +99,6 @@ class TelaTreinoAB(Screen):
         print(self.ids._ti3._imagem)
         print(self.get_figura_target(2))
 
-        # contador_figura = 0
-        # for child in self.children:
-        #     if type(child) == TargetPicture:
-        #         # carrega filhos do target (imagem)
-        #         for image in child.children:
-        #             figura = self.get_figura_target(contador_figura)
-        #             logging.debug('popula_imagens_target: Associada figura {} com wid=[{}]'.format(figura, image.wid))
-        #             imagem_name = 'figuras/' + self.ordem + '/' + figura + '.jpg'
-        #             image.__self__._imagem = imagem_name
-        #             contador_figura += 1
 
     def get_figura_target(self, posicao):
         figura = self.combinacoes[3 + posicao]
