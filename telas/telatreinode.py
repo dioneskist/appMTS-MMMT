@@ -1,6 +1,8 @@
 import logging
 import os
 import random
+from datetime import datetime
+from functools import partial
 
 from kivy.app import App
 from kivy.clock import Clock
@@ -12,6 +14,7 @@ from kivy.uix.image import Image
 from kivy.uix.label import Label
 from kivy.uix.screenmanager import ScreenManager, Screen
 
+from elements.attempt import Attempt
 from elements.elements import SourcePicture, TargetPicture, Imagem
 
 
@@ -25,6 +28,7 @@ class TelaTreinoDE(Screen):
     combinacoes = ListProperty()
     acertos = 0
     erros = 0
+    telaatual = StringProperty()
 
     def __init__(self, **kw):
         super(TelaTreinoDE, self).__init__(**kw)
@@ -38,6 +42,7 @@ class TelaTreinoDE(Screen):
         self.popula_imagens_source()
         logging.debug('tela: {} com ids: {}'.format(self.name, self.ids))
         self.manager.latencia = Clock.get_time()
+        self.telaatual = self.parent.current
 
     def on_leave(self, *args):
         logging.debug('on_leave: {} com ids: {}'.format(self.name, self.ids))
@@ -121,8 +126,11 @@ class TelaTreinoDE(Screen):
             # ex: a figura do wid wid-si1 tem o mesmo numero da figura do wid-ti1 esta ok
             # ex: a figura do wid wid-si2 tem o mesmo numero da figura do wid-ti2 esta ok
             # ex: a figura do wid wid-si3 NAO tem o mesmo numero da figura do wid-ti32 NAO ok
-            numero_figura_s = self.get_imagens_source('wid-si' + str(id_widget_source[len(id_widget_source) - 1]))
-            numero_figura_t = self.get_imagens_target('wid-ti' + str(id_widget_target[len(id_widget_target) - 1]))
+            ln_figura_s = self.get_imagens_source('wid-si' + str(id_widget_source[len(id_widget_source) - 1]))
+            ln_figura_t = self.get_imagens_target('wid-ti' + str(id_widget_target[len(id_widget_target) - 1]))
+            numero_figura_s = ln_figura_s[1]
+            numero_figura_t = ln_figura_t[1]
+
             logging.debug('acertou: serao validadas os numeros [{}] e [{}]'.format(numero_figura_s, numero_figura_t))
             if numero_figura_s == numero_figura_t:
                 logging.debug(
@@ -131,6 +139,8 @@ class TelaTreinoDE(Screen):
             else:
                 logging.debug(
                     'acertou: ERROU -- os numeros [{}] e [{}]'.format(numero_figura_s, numero_figura_t))
+        else:
+            print('nao bateu em nada. Printar ND no relatorio ({} ND)'.format(id_widget_source))
 
     def get_imagens_source(self, wid):
         logging.debug('get_imagens_source: iniciando {}'.format(wid))
@@ -144,14 +154,16 @@ class TelaTreinoDE(Screen):
                     if (image.__self__.wid == wid):
                         logging.debug('get_imagens_source: validando wid=[{}] e imagem {}'.format(image.__self__.wid,
                                                                                                   image.__self__.source))
-                        return self.get_number_from_source(image.__self__.source)
+                        return self.get_letter_and_number_from_source(image.__self__.source)
 
-    def get_number_from_source(self, source):
+    def get_letter_and_number_from_source(self, source):
         # figuras/teste/b_3.jpg
-        s = source.split('_')
-        n = s[1].split('.')
-        logging.debug('get_number_from_source: extraido numero {} da imagem com nome: {}'.format(n[0], source))
-        return n[0]
+        s = source.split('/')[2]
+        ln = s[0]
+        nn = s[2]
+        logging.debug(
+            'get_number_from_source: extraido letter {} and number {} da imagem com nome: {}'.format(ln, nn, source))
+        return ln + nn
 
     def get_imagens_target(self, wid):
         logging.debug('get_imagens_target: iniciando {}'.format(wid))
@@ -167,7 +179,7 @@ class TelaTreinoDE(Screen):
                         logging.debug('get_imagens_source: validando wid=[{}] e imagem {}'.format(image.__self__.wid,
                                                                                                   image.__self__.source))
                         # print(image.__self__.source)
-                        return self.get_number_from_source(image.__self__.source)
+                        return self.get_letter_and_number_from_source(image.__self__.source)
 
     def colocar_source_na_origem(self, id_widget_source):
         logging.debug('colocar_source_na_origem: app size: {}wX{}h'.format(self.width, self.height))
@@ -198,19 +210,22 @@ class TelaTreinoDE(Screen):
         logging.debug('show_smile: colocando smile {}'.format(number))
         if int(number) == 1:
             self.ids._smile1.source = 'figuras/smile.png'
-            self.apagar_widget_id = self.ids._smile1
-            self.desaparecer_smile()
+            apagar_widget_id = self.ids._smile1
+            self.desaparecer_smile(apagar_widget_id)
 
-    def desaparecer_smile(self):
-        logging.debug('desaparecer_smile: smile a ser retirado')
-        Clock.schedule_interval(self.apagar_smiles, 2.0)
+    def desaparecer_smile(self, apagar_widget_id):
+        logging.debug('desaparecer_smile: smile a ser retirado wis={}'.format(apagar_widget_id))
+        callback = self.apagar_smiles
+        timeout = 2.0
+        logging.debug(
+            'desaparecer_smile: scheduled {} with {} timeout for smile wid={}'.format(callback.__name__, timeout,
+                                                                                      apagar_widget_id))
+        Clock.schedule_once(partial(callback, apagar_widget_id, apagar_widget_id), timeout)
 
-    def apagar_smiles(self, delta_time):
-        if self.apagar_widget_id is not None:
-            logging.debug('apagar_smiles: removendo {}'.format(self.apagar_widget_id))
-            self.remove_widget(self.apagar_widget_id)
-            self.apagar_widget_id = None
-            Clock.unschedule(self.apagar_smiles)
+    def apagar_smiles(self, apagar_widget_id, *args, **keywords):
+        logging.debug('apagar_smiles: removido smiles wid={}'.format(apagar_widget_id))
+        self.remove_widget(apagar_widget_id)
+        self.validate_troca_tela()
 
     def incrementa_erro(self):
         logging.debug('Telateste.incrementa_erro: incrementando erros de {} para {}'.format(self.erros, self.erros + 1))
@@ -221,6 +236,28 @@ class TelaTreinoDE(Screen):
         self.manager.erros_total_str = 'Erros:  ' + str(self.manager.erros_total)
         self.manager.latencia_erro_str = "Latencia erro: {0:.2f}".format(
             Clock.get_time() - self.manager.latencia) + ' segundos'
+        self.manager.erros_consecutivos()
+
+    def write_attempt(self, hit_error, id_widget_source, id_widget_target):
+        logging.debug(
+            'TelaTreinoAB.write_attempt: writing attempt Hit?{}:{} {}-{}'.format(hit_error, hit_error.value,
+                                                                                 id_widget_source, id_widget_target))
+
+        letter_number_figura_s = self.get_imagens_source('wid-si' + str(id_widget_source[len(id_widget_source) - 1]))
+        letter_number_figura_t = self.get_imagens_target('wid-ti' + str(id_widget_target[len(id_widget_target) - 1]))
+
+        # key_comparation is the position on the screen in inverter order
+        # position 1 return 3; 2 return 2 and 3 return 1
+        attempt = Attempt(comparation=letter_number_figura_s,
+                          key_comparation=get_position(id_widget_source[len(id_widget_source) - 1]),
+                          model=letter_number_figura_t,
+                          key_model=get_position(id_widget_target[len(id_widget_target) - 1]),
+                          hit_or_error=hit_error.value,
+                          latency_from_screen=datetime.now() - self.manager.start_screen_time,
+                          consecutive_hits=self.manager.consecutive_hists)
+
+        print(attempt)
+        self.manager.result_log.write_attempt(attempt)
 
     def incrementa_acerto(self):
         logging.debug(
@@ -230,12 +267,19 @@ class TelaTreinoDE(Screen):
         self.manager.acertos_total_str = 'Acertos:  ' + str(self.manager.acertos_total)
         self.manager.latencia_acerto_str = "Latência: {0:.2f}".format(
             Clock.get_time() - self.manager.latencia) + ' segundos'
+        self.manager.acertos_consecutivos()
+
+    def validate_troca_tela(self):
         if self.acertos == 1:
             logging.info('Telateste.incrementa_acerto: ACERTOU TUDO ({} acertos) !!!'.format(self.acertos))
-            Clock.schedule_interval(self.troca_tela, 1.0)
+            Clock.schedule_once(self.troca_tela, 0.5)
 
     def troca_tela(self, delta):
         Clock.unschedule(self.troca_tela)
         self.manager.tela_treinoDE_finished = True
         self.manager.tela_treinoDE_respondidas += 1
         self.manager.troca_tela()
+
+
+def get_position(wid):
+    return '2'

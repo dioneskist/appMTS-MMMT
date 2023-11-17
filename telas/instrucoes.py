@@ -1,6 +1,7 @@
 from kivy.uix.screenmanager import Screen
 import logging
 
+
 class TelaInstrucoes(Screen):
 
     def on_enter(self):

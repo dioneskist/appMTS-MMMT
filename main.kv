@@ -17,23 +17,32 @@
     orientation: 'vertical'
 
 <MyButton@Button>:
-    font_size: 35
+    font_size: 40
 
-<LabelAcertos1@Label>:
+<LabelAcertosTotal@Label>:
     font_size: 25
-    pos_hint: {'center_x': 0.35, 'center_y': 0.98}
-<LabelAcertos2@Label>:
+    pos: 80, 1780
+    color: 0,0,0,1
+<LabelErrosTotal@Label>:
     font_size: 25
-    pos_hint: {'center_x': 0.65, 'center_y': 0.98}
-<LabelErros1@Label>:
+    pos: 80, 1750
+    color: 0,0,0,1
+<LabelAcertosLatencia@Label>:
     font_size: 25
-    pos_hint: {'center_x': 0.35, 'center_y': 0.95}
-<LabelErros2@Label>:
+    pos: 500, 1880
+    color: 0,0,0,1
+<LabelErrosLatencia@Label>:
     font_size: 25
-    pos_hint: {'center_x': 0.65, 'center_y': 0.95}
+    pos: 500, 1850
+    color: 0,0,0,1
 <LabelTempoTotal@Label>:
     font_size: 25
-    pos_hint: {'center_x': 0.65, 'center_y': 0.90}
+    pos: 800, 1880
+    color: 0,0,0,1
+<LabelTelaAtual@Label>:
+    font_size: 25
+    pos: 800, 1850
+    color: 0,0,0,1
 <Smile@Image>:
     size: 225, 225
     fit_mode: 'cover'
@@ -44,8 +53,14 @@
 <Menu>:
     MyBoxLayout:
         MyButton:
+            text: 'Pré-Treino'
+            on_release:
+                root.manager.ordem = 'pretreino'
+                root.manager.letters = 'PT AB/DE'
+                root.manager.current = 'participante'
+                root.manager.transition.direction = 'left'
+        MyButton:
             text: 'Ordem 1'
-            font_size: 40
             on_release:
                 root.manager.ordem = 'ordem1'
                 root.manager.current = 'telatt'
@@ -91,7 +106,7 @@
                 root.manager.current = 'participante'
                 root.manager.transition.direction = 'left'
         MyButton:
-            text: 'TT CB/EF'
+            text: 'TT CB/FE'
             on_release:
                 root.manager.current = 'participante'
                 root.manager.transition.direction = 'left'
@@ -101,7 +116,7 @@
                 root.manager.current = 'participante'
                 root.manager.transition.direction = 'left'
         MyButton:
-            text: 'TT AC/FD'
+            text: 'TT CA/FD'
             on_release:
                 root.manager.current = 'participante'
                 root.manager.transition.direction = 'left'
@@ -149,16 +164,18 @@
 
 <TelaTreinoAB>:
     targetPictures: [_t1, _t2, _t3]
-    LabelAcertos1:
+    LabelAcertosTotal:
         text: app.root.acertos_total_str
-    LabelAcertos2:
+    LabelAcertosLatencia:
         text: app.root.latencia_acerto_str
     LabelTempoTotal:
         text: app.root.tempo_decorrido_str
-    LabelErros1:
+    LabelErrosTotal:
         text: app.root.erros_total_str
-    LabelErros2:
+    LabelErrosLatencia:
         text: app.root.latencia_erro_str
+    LabelTelaAtual:
+        text: root.telaatual
     Smile:
         id: _smile1
         pos: 555, 207
@@ -274,16 +291,18 @@
 
 <TelaTreinoDE>:
     targetPictures: [_t1]
-    LabelAcertos1:
+    LabelAcertosTotal:
         text: app.root.acertos_total_str
-    LabelAcertos2:
+    LabelAcertosLatencia:
         text: app.root.latencia_acerto_str
     LabelTempoTotal:
         text: app.root.tempo_decorrido_str
-    LabelErros1:
+    LabelErrosTotal:
         text: app.root.erros_total_str
-    LabelErros2:
+    LabelErrosLatencia:
         text: app.root.latencia_erro_str
+    LabelTelaAtual:
+        text: root.telaatual
     Smile:
         id: _smile1
         pos: 555, 847
@@ -370,14 +389,14 @@
 
 <TelaFinal>:
     MyBoxLayout:
-        Label:
-            id: text
-            text: 'Teste finalizado!'
+        Image:
+            source: 'figuras/joinha.jpg'
         MyButton:
             text: 'Voltar ao Início'
             on_release:
                 root.manager.reiniciar_app()
-
         MyButton:
             text: 'Sair'
             on_release: app.stop()
+
+<BlankTela>:

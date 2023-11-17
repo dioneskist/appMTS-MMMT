@@ -1,13 +1,13 @@
 [app]
 
 # (str) Title of your application
-title = TRTT APP
+title = My Application
 
 # (str) Package name
-package.name = trttapp
+package.name = myapp
 
 # (str) Package domain (needed for android/ios packaging)
-package.domain = br.com.dsk
+package.domain = org.test
 
 # (str) Source code where the main.py live
 source.dir = .
@@ -62,7 +62,6 @@ orientation = portrait
 
 #
 # author = © Copyright Info
-author = Dione Kist - github.com/dioneskist
 
 # change the major version of python used by the app
 osx.python_version = 3

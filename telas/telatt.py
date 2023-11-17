@@ -1,6 +1,11 @@
+import logging
+
 from kivy.uix.screenmanager import Screen
 
 
 class TelaTT(Screen):
     def on_leave(self, *args):
-        self.manager.comecar()
+        # if pretreino screen telatt will not be called
+        if self.manager.ordem != "pretreino":
+            logging.debug("Ordem select is {}".format(self.manager.ordem))
+            self.manager.comecar()

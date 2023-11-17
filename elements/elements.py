@@ -3,6 +3,8 @@ from kivy.properties import StringProperty, ListProperty
 from kivy.uix.image import Image
 from kivy.uix.label import Label
 
+from elements.enum.hiterror import HitError
+
 red = [1, 0, 0, 1]
 light_blue = [0, 0.5, 1, 1]
 yellow = [1, 1, 0, 1]
@@ -53,12 +55,12 @@ class SourcePicture(Label):
                 logging.debug('on_touch_up: acertou')
                 self.reset_colors()
                 # coloca source na origem
-                self.parent.colocar_source_na_origem(self.clicked_wid)
-                self.parent.show_smile(id_widget_target[len(id_widget_target) - 1])
-                # remove source widget
-                # print(self.parent)
+                # self.parent.colocar_source_na_origem(self.clicked_wid)
                 self.parent.incrementa_acerto()
+                self.parent.show_smile(id_widget_target[len(id_widget_target) - 1])
+                self.parent.write_attempt(HitError.HIT, id_widget_source, id_widget_target)
                 self.parent.remove_widget(self)
+
                 self.touchedMe = False
 
             else:
@@ -66,7 +68,9 @@ class SourcePicture(Label):
                 # devolver o source para a origem
                 self.reset_colors()
                 self.parent.colocar_source_na_origem(self.clicked_wid)
-                self.parent.incrementa_erro()
+                if collision:
+                    self.parent.incrementa_erro()
+                    self.parent.write_attempt(HitError.ERROR, id_widget_source, id_widget_target)
                 self.touchedMe = False
         else:
             self.touchedMe = False
