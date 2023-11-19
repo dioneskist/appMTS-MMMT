@@ -15,6 +15,7 @@ from kivy.uix.image import Image
 from kivy.uix.label import Label
 from kivy.uix.screenmanager import ScreenManager, Screen
 
+from elements.models import ScreenHandlerTT
 from elements.resultlog import ResultLog
 from telas.blanktela import BlankTela
 from telas.instrucoes import TelaInstrucoes
@@ -155,6 +156,9 @@ class GerenciadorDeTelas(ScreenManager):
     # proxima
     proxima = ""
 
+    # sabe previous screenmanager
+    previouss_sm = None
+
     # total de telas validas para cada tipo
     total_telasAB_validas = 0
     total_telasDE_validas = 0
@@ -163,6 +167,8 @@ class GerenciadorDeTelas(ScreenManager):
     result_log = None
     participant_name = None
     consecutive_hists = None
+
+
 
     def acertos_consecutivos(self):
         if self.consecutive_hists is None:
@@ -209,83 +215,83 @@ class GerenciadorDeTelas(ScreenManager):
         logging.debug(
             'comecar: criando tela para ordem {} e letters {}'.format(self.ordem, self.letters))
 
-        if 'PT AB/DE' in self.letters:
-            """
-            for para criar as telas de treino com todas as combinacoes possiveis entre (x1,x2,x3 e y1,y2,y3)
-            e (y1,y1,y3 e w1)
-            tela treino usa as letras da posica 3 e 4 (AB) 'TR AB/DE'
-            """
-
-            self.total_acertos_necessarios = 6
-            self.tempo_maximo = 600.0
-
-            letter_x = str(self.letters[3]).lower()
-            letter_y = str(self.letters[4]).lower()
-            letter_z = str(self.letters[6]).lower()
-            letter_w = str(self.letters[7]).lower()
-            list_x = itertools.permutations([letter_x + '_1', letter_x + '_2', letter_x + '_3'], 3)
-            list_y = itertools.permutations([letter_y + '_1', letter_y + '_2', letter_y + '_3'], 3)
-            list_z = itertools.permutations([letter_z + '_1', letter_z + '_2', letter_z + '_3'], 1)
-            list_w = itertools.permutations([letter_w + '_1', letter_w + '_2', letter_w + '_3'], 3)
-            self.all_combinacoes_XY = gerar_todas_combinacoes(list_y, list_x, False)
-            self.all_combinacoes_ZW = gerar_todas_combinacoes(list_z, list_w, combinacoes_teste_DE=True)
-
-            self.total_telasAB_validas = len(self.all_combinacoes_XY)
-            self.total_telasDE_validas = len(self.all_combinacoes_ZW)
-
-            # cria primeira tela AB ou BC para comecar
-            self.adiciona_tela(
-                TelaTreinoAB(name='TelaTreinoAB_' + str(self.tela_treinoAB_current),
-                             combinacoes=self.all_combinacoes_XY[self.tela_treinoAB_current],
-                             ordem=self.ordem))
-
-            logging.debug('comecar: configurado telaAB_{} com combinacao={}'.format(self.tela_treinoAB_current,
-                                                                                    self.all_combinacoes_XY[
-                                                                                        self.tela_treinoAB_current]))
-            self.primeira_tela = 'TelaTreinoAB_' + str(self.tela_treinoAB_current)
-
-        # valida se o é treino
-        if 'TR AB' in self.letters or 'TR BC' in self.letters:
-            """
-            for para criar as telas de treino com todas as combinacoes possiveis entre (x1,x2,x3 e y1,y2,y3)
-            e (y1,y1,y3 e w1)
-            tela treino usa as letras da posica 3 e 4 (AB) 'TR AB/DE'
-            """
-
-            self.total_acertos_necessarios = 18
-            self.tempo_maximo = 1800.0
-
-            letter_x = str(self.letters[3]).lower()
-            letter_y = str(self.letters[4]).lower()
-            letter_z = str(self.letters[6]).lower()
-            letter_w = str(self.letters[7]).lower()
-            list_x = itertools.permutations([letter_x + '_1', letter_x + '_2', letter_x + '_3'], 3)
-            list_y = itertools.permutations([letter_y + '_1', letter_y + '_2', letter_y + '_3'], 3)
-            list_z = itertools.permutations([letter_z + '_1', letter_z + '_2', letter_z + '_3'], 1)
-            list_w = itertools.permutations([letter_w + '_1', letter_w + '_2', letter_w + '_3'], 3)
-            self.all_combinacoes_XY = gerar_todas_combinacoes(list_y, list_x, False)
-            self.all_combinacoes_ZW = gerar_todas_combinacoes(list_z, list_w, combinacoes_teste_DE=True)
-
-            self.total_telasAB_validas = len(self.all_combinacoes_XY)
-            self.total_telasDE_validas = len(self.all_combinacoes_ZW)
-
-            # cria primeira tela AB ou BC para comecar
-            self.adiciona_tela(
-                TelaTreinoAB(name='TelaTreinoAB_' + str(self.tela_treinoAB_current),
-                             combinacoes=self.all_combinacoes_XY[self.tela_treinoAB_current],
-                             ordem=self.ordem))
-
-            logging.debug('comecar: configurado telaAB_{} com combinacao={}'.format(self.tela_treinoAB_current,
-                                                                                    self.all_combinacoes_XY[
-                                                                                        self.tela_treinoAB_current]))
-            self.primeira_tela = 'TelaTreinoAB_' + str(self.tela_treinoAB_current)
-
-        # valida se o é misto
-        if 'TR Misto' in self.letters:
-            self.total_acertos_necessarios = 24
-            self.tempo_maximo = 600.0
-            self.primeira_tela = 'TelaMisto_0'
-            pass
+        # if 'PT AB/DE' in self.letters:
+        #     """
+        #     for para criar as telas de treino com todas as combinacoes possiveis entre (x1,x2,x3 e y1,y2,y3)
+        #     e (y1,y1,y3 e w1)
+        #     tela treino usa as letras da posica 3 e 4 (AB) 'TR AB/DE'
+        #     """
+        #
+        #     self.total_acertos_necessarios = 6
+        #     self.tempo_maximo = 600.0
+        #
+        #     letter_x = str(self.letters[3]).lower()
+        #     letter_y = str(self.letters[4]).lower()
+        #     letter_z = str(self.letters[6]).lower()
+        #     letter_w = str(self.letters[7]).lower()
+        #     list_x = itertools.permutations([letter_x + '_1', letter_x + '_2', letter_x + '_3'], 3)
+        #     list_y = itertools.permutations([letter_y + '_1', letter_y + '_2', letter_y + '_3'], 3)
+        #     list_z = itertools.permutations([letter_z + '_1', letter_z + '_2', letter_z + '_3'], 1)
+        #     list_w = itertools.permutations([letter_w + '_1', letter_w + '_2', letter_w + '_3'], 3)
+        #     self.all_combinacoes_XY = gerar_todas_combinacoes(list_y, list_x, False)
+        #     self.all_combinacoes_ZW = gerar_todas_combinacoes(list_z, list_w, combinacoes_teste_DE=True)
+        #
+        #     self.total_telasAB_validas = len(self.all_combinacoes_XY)
+        #     self.total_telasDE_validas = len(self.all_combinacoes_ZW)
+        #
+        #     # cria primeira tela AB ou BC para comecar
+        #     self.adiciona_tela(
+        #         TelaTreinoAB(name='TelaTreinoAB_' + str(self.tela_treinoAB_current),
+        #                      combinacoes=self.all_combinacoes_XY[self.tela_treinoAB_current],
+        #                      ordem=self.ordem))
+        #
+        #     logging.debug('comecar: configurado telaAB_{} com combinacao={}'.format(self.tela_treinoAB_current,
+        #                                                                             self.all_combinacoes_XY[
+        #                                                                                 self.tela_treinoAB_current]))
+        #     self.primeira_tela = 'TelaTreinoAB_' + str(self.tela_treinoAB_current)
+        #
+        # # valida se o é treino
+        # if 'TR AB' in self.letters or 'TR BC' in self.letters:
+        #     """
+        #     for para criar as telas de treino com todas as combinacoes possiveis entre (x1,x2,x3 e y1,y2,y3)
+        #     e (y1,y1,y3 e w1)
+        #     tela treino usa as letras da posica 3 e 4 (AB) 'TR AB/DE'
+        #     """
+        #
+        #     self.total_acertos_necessarios = 18
+        #     self.tempo_maximo = 1800.0
+        #
+        #     letter_x = str(self.letters[3]).lower()
+        #     letter_y = str(self.letters[4]).lower()
+        #     letter_z = str(self.letters[6]).lower()
+        #     letter_w = str(self.letters[7]).lower()
+        #     list_x = itertools.permutations([letter_x + '_1', letter_x + '_2', letter_x + '_3'], 3)
+        #     list_y = itertools.permutations([letter_y + '_1', letter_y + '_2', letter_y + '_3'], 3)
+        #     list_z = itertools.permutations([letter_z + '_1', letter_z + '_2', letter_z + '_3'], 1)
+        #     list_w = itertools.permutations([letter_w + '_1', letter_w + '_2', letter_w + '_3'], 3)
+        #     self.all_combinacoes_XY = gerar_todas_combinacoes(list_y, list_x, False)
+        #     self.all_combinacoes_ZW = gerar_todas_combinacoes(list_z, list_w, combinacoes_teste_DE=True)
+        #
+        #     self.total_telasAB_validas = len(self.all_combinacoes_XY)
+        #     self.total_telasDE_validas = len(self.all_combinacoes_ZW)
+        #
+        #     # cria primeira tela AB ou BC para comecar
+        #     self.adiciona_tela(
+        #         TelaTreinoAB(name='TelaTreinoAB_' + str(self.tela_treinoAB_current),
+        #                      combinacoes=self.all_combinacoes_XY[self.tela_treinoAB_current],
+        #                      ordem=self.ordem))
+        #
+        #     logging.debug('comecar: configurado telaAB_{} com combinacao={}'.format(self.tela_treinoAB_current,
+        #                                                                             self.all_combinacoes_XY[
+        #                                                                                 self.tela_treinoAB_current]))
+        #     self.primeira_tela = 'TelaTreinoAB_' + str(self.tela_treinoAB_current)
+        #
+        # # valida se o é misto
+        # if 'TR Misto' in self.letters:
+        #     self.total_acertos_necessarios = 24
+        #     self.tempo_maximo = 600.0
+        #     self.primeira_tela = 'TelaMisto_0'
+        #     pass
         #     """
         #     for para criar as telas de treino com todas as combinacoes possibeis entre x1,x2,x3 e y1,y2,y3
         #     tela treino usa as letras da posica 3 e 4 'TR AB/DE'
@@ -301,9 +307,11 @@ class GerenciadorDeTelas(ScreenManager):
         #         index += 1
         #     self.current = 'TelaTreinoAB0'
         #     self.transition.direction = 'left'
-        if 'TT' in self.letters:
-            self.primeira_tela = 'TelaTeste_0'
-            pass
+        # if 'TT' in self.letters:
+        #     self.previouss_sm = self
+        #     self = ScreenHandlerTT()
+
+
 
     def iniciar_Time(self):
         self.time_inicio = Clock.get_time()
@@ -315,9 +323,13 @@ class GerenciadorDeTelas(ScreenManager):
         return self.tempo_decorrido
 
     def iniciar_treinos(self):
-        self.iniciar_Time()
-        self.gerar_resultlog_file()
-        self.current = self.primeira_tela
+        if 'TT' in self.letters:
+            print(self.letters)
+            self.parent.change_sm()
+        else:
+            self.iniciar_Time()
+            # self.gerar_resultlog_file()
+            self.current = self.primeira_tela
 
     def gerar_resultlog_file(self):
         result_log = ResultLog()
@@ -465,10 +477,20 @@ class GerenciadorDeTelas(ScreenManager):
 
 
 class Main(App):
+    title = 'TRTT'
 
-    def build(self):
-        self.title = 'TRTT'
-        return GerenciadorDeTelas()
+    def start(self):
+        kv_file = 'main.kv'
+        self.load_kv(kv_file)
+
+        sm = GerenciadorDeTelas()
+        sh = ScreenHandlerTT()
+        self.root = sh
+        self.run()
+
+    def change_sm(self):
+        self.root = ScreenHandlerTT()
+        self.run()
 
 
-Main().run()
+Main().start()

@@ -131,3 +131,39 @@ class TestScreenHandlerTT(unittest.TestCase):
 
         a.root.current_screen = sab.name
         a.root.current_screen = sde.name
+
+    def test_load_handlerTT_with_all_parameters_and_telaTTab(self):
+        ordem = 'ordem1'
+        kv_file = 'kvs/test_load_telatestett_all_screens.kv'
+        self.assertEquals(True, exists(kv_file))
+
+        a = App()
+        a.load_kv(kv_file)
+
+        a = App()
+        sh = ScreenHandlerTT(test_name=self.letters, ordem=ordem, number_hits_to_end=12, timeout=1.0)
+        sm_previous = a.root
+        a.root = sh
+        Clock.schedule_once(a.stop, .1)
+        a.run()
+
+        a.root
+        Clock.schedule_once(a.stop, .1)
+        a.run()
+
+    def test_latency_from_start_screen_time(self):
+        ordem = 'ordem1'
+        kv_file = 'kvs/test_load_telatestett_all_screens.kv'
+        self.assertEquals(True, exists(kv_file))
+        a = App()
+        a.load_kv(kv_file)
+
+        sh = ScreenHandlerTT(test_name=self.letters, ordem=ordem, number_hits_to_end=1, timeout=1.0)
+
+        a.root = sh
+        Clock.schedule_once(a.stop, .1)
+        a.run()
+
+        self.assertIsNotNone(sh.start_test_time)
+        self.assertIsNotNone(sh.end_test_time)
+        self.assertIsNotNone(sh.latency_test)

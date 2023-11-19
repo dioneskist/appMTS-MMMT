@@ -5,7 +5,6 @@ from kivy.properties import ListProperty, StringProperty
 from kivy.uix.image import Image
 from kivy.uix.screenmanager import Screen
 from functools import partial
-from utils.screen_combinations import preparar_combinacoes
 
 from elements.attempt import Attempt
 from elements.elements import SourcePicture, TargetPicture
@@ -28,30 +27,37 @@ class TelaTesteTTAB(Screen):
     targetPictures = ListProperty(None)
     sourcePictures = ListProperty(None)
     images = ListProperty(None)
+    ordem = StringProperty()
+    combinacoes = ListProperty()
 
     # variaveis utilizadas na inicializacao de uma nova tentativa
-    ordem = StringProperty('teste')
-    combinacoes = ListProperty()
     acertos = 0
     erros = 0
-    telaatual = StringProperty()
+
+    start_time: datetime
+    end_time: datetime
 
     def __init__(self, **kw):
         super(TelaTesteTTAB, self).__init__(**kw)
-        self.popula_imagens_source()
-        self.popula_imagens_target()
+
         logging.debug('TelaTesteBA.__init__:')
         logging.debug('TelaTesteBA.__init__: combinacoes {}'.format(self.combinacoes))
+
     #
-    # def on_enter(self, *args):
-    #
-    #     logging.debug('on_enter: {} com ids: {}'.format(self.name, self.ids))
-    #     self.manager.latencia = Clock.get_time()
-    #     self.manager.start_screen_time = datetime.now()
-    #     self.telaatual = self.parent.current
-    #
-    # def on_leave(self, *args):
-    #     logging.debug('on_leave: {} com ids: {}'.format(self.name, self.ids))
+    def on_enter(self, *args):
+        logging.debug('TelaTesteTTAB.on_enter: {} com ids: {}'.format(self.name, self.ids))
+        self.popula_imagens_source()
+        self.popula_imagens_target()
+        self.start_time = datetime.now()
+
+    def on_pre_leave(self, *args):
+        print('TelaTesteTTAB.on_pre_leave: {} com ids: {}'.format(self.name, self.ids))
+        logging.debug('TelaTesteTTAB.on_pre_leave: {} com ids: {}'.format(self.name, self.ids))
+
+    def on_leave(self, *args):
+        print('TelaTesteTTAB.on_leave: {} com ids: {}'.format(self.name, self.ids))
+        logging.debug('TelaTesteTTAB.on_leave: {} com ids: {}'.format(self.name, self.ids))
+
     #
     # # popular imagens para todos os sourcesPictures
     # # a_1
@@ -77,7 +83,6 @@ class TelaTesteTTAB(Screen):
         #             imagem_name = 'figuras/' + self.ordem + '/' + figura + '.jpg'
         #             image.__self__._imagem = imagem_name
         #             contador_figura += 1
-
 
     # popular imagens para todos os targetPictures
     # a_1
@@ -109,6 +114,7 @@ class TelaTesteTTAB(Screen):
         figura = self.combinacoes[posicao]
         logging.debug('get_figura_source: pegando figura source {} posicao={}'.format(figura, posicao))
         return figura
+
     """
     return three values
     collision status (true, false)
@@ -213,6 +219,8 @@ class TelaTesteTTAB(Screen):
                                                                                                      self.ids._s3.pos[
                                                                                                          1]))
 
+    def set_end_time(self):
+        self.end_time = datetime.now()
     # def show_smile(self, number):
     #     pass
     # self.validate_troca_tela()

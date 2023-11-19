@@ -1,6 +1,7 @@
 import itertools
 import logging
 import unittest
+from datetime import datetime
 from os.path import exists
 
 from kivy.app import App
@@ -8,6 +9,7 @@ from kivy.clock import Clock
 from kivy.uix.label import Label
 from kivy.uix.screenmanager import ScreenManager, Screen
 
+from elements.models.ScreenHandlerTT import ScreenHandlerTT
 from telas.telatestettab import TelaTesteTTAB
 from elements.elements import SourcePicture, TargetPicture
 from telas.telatestettde import TelaTesteTTDE
@@ -316,3 +318,6 @@ class TestTelaTesteTT(unittest.TestCase):
         self.assertEquals(a.root.current_screen.ids._s3.wid, 'wid-s3')
 
         self.assertEquals(a.root.current_screen.name, screen_name)
+
+    def test_on_enter_and_on_leave(self):
+        pass
