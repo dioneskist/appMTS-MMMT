@@ -34,6 +34,7 @@ class TelaTreinoAB(Screen):
     acertos = 0
     erros = 0
     telaatual = StringProperty()
+    should_show_smile = True
 
     def __init__(self, **kw):
         super(TelaTreinoAB, self).__init__(**kw)
@@ -61,30 +62,8 @@ class TelaTreinoAB(Screen):
     def popula_imagens_source(self):
         logging.debug('popula_imagens_source: Iniciando carregamento da imagens para sourcePictures')
         self.ids._si1._imagem = 'figuras/' + self.ordem + '/' + self.get_figura_source(0) + '.jpg'
-        print(self.ids._si1._imagem)
-        print(self.get_figura_source(0))
         self.ids._si2._imagem = 'figuras/' + self.ordem + '/' + self.get_figura_source(1) + '.jpg'
-        print(self.ids._si2._imagem)
-        print(self.get_figura_source(1))
         self.ids._si3._imagem = 'figuras/' + self.ordem + '/' + self.get_figura_source(2) + '.jpg'
-        print(self.ids._si3._imagem)
-        print(self.get_figura_source(2))
-
-        # carrega filhos do world (target, source, smile)
-        # contador_figura = 0
-        # for child in self.children:
-        #     # print(id(c))
-        #     # print(c.wid)
-        #     if type(child) == SourcePicture:
-        #         # carrega filhos do source (imagem)
-        #         for image in child.children:
-        #             # print(sc)
-        #             # print(sc.wid)
-        #             figura = self.get_figura_source(contador_figura)
-        #             logging.debug('popula_imagens_source: Associada figura {} com wid=[{}]'.format(figura, image.wid))
-        #             imagem_name = 'figuras/' + self.ordem + '/' + figura + '.jpg'
-        #             image.__self__._imagem = imagem_name
-        #             contador_figura += 1
 
     # popular imagens para todos os targetPictures
     # a_1
@@ -93,25 +72,8 @@ class TelaTreinoAB(Screen):
         logging.debug('popula_imagens_target: Iniciando carregamento da imagens para targetPictures')
         # carrega filhos do world (target, source, smile)
         self.ids._ti1._imagem = 'figuras/' + self.ordem + '/' + self.get_figura_target(0) + '.jpg'
-        print(self.ids._ti1._imagem)
-        print(self.get_figura_target(0))
         self.ids._ti2._imagem = 'figuras/' + self.ordem + '/' + self.get_figura_target(1) + '.jpg'
-        print(self.ids._ti2._imagem)
-        print(self.get_figura_target(1))
         self.ids._ti3._imagem = 'figuras/' + self.ordem + '/' + self.get_figura_target(2) + '.jpg'
-        print(self.ids._ti3._imagem)
-        print(self.get_figura_target(2))
-
-        # contador_figura = 0
-        # for child in self.children:
-        #     if type(child) == TargetPicture:
-        #         # carrega filhos do target (imagem)
-        #         for image in child.children:
-        #             figura = self.get_figura_target(contador_figura)
-        #             logging.debug('popula_imagens_target: Associada figura {} com wid=[{}]'.format(figura, image.wid))
-        #             imagem_name = 'figuras/' + self.ordem + '/' + figura + '.jpg'
-        #             image.__self__._imagem = imagem_name
-        #             contador_figura += 1
 
     def get_figura_target(self, posicao):
         figura = self.combinacoes[3 + posicao]
@@ -253,7 +215,7 @@ class TelaTreinoAB(Screen):
     def apagar_smiles(self, apagar_widget_id, *args, **keywords):
         logging.debug('apagar_smiles: removido smiles wid={}'.format(apagar_widget_id))
         self.remove_widget(apagar_widget_id)
-        self.validate_troca_tela()
+        self.incrementa_acerto()
 
     def incrementa_erro(self):
         logging.debug(
@@ -298,6 +260,7 @@ class TelaTreinoAB(Screen):
         self.manager.latencia_acerto_str = "Latencia acerto: {0:.2f}".format(
             Clock.get_time() - self.manager.latencia) + ' segundos'
         self.manager.acertos_consecutivos()
+        self.validate_troca_tela()
 
     def validate_troca_tela(self):
         if self.acertos == 3:
@@ -311,5 +274,5 @@ class TelaTreinoAB(Screen):
                                                                                     'self.manager.current',
                                                                                     proxima_tela))
         Clock.unschedule(self.troca_tela)
-        self.manager.tela_treinoAB_finished = True
+        self.manager.tela_AB_finished = True
         self.manager.troca_tela()

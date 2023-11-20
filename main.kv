@@ -98,26 +98,31 @@
         MyButton:
             text: 'TR Misto'
             on_release:
+                root.manager.letters = 'TR Misto'
                 root.manager.current = 'participante'
                 root.manager.transition.direction = 'left'
         MyButton:
             text: 'TT BA/ED'
             on_release:
+                root.manager.letters = 'TT BA/ED'
                 root.manager.current = 'participante'
                 root.manager.transition.direction = 'left'
         MyButton:
             text: 'TT CB/FE'
             on_release:
+                root.manager.letters = 'TT CB/FE'
                 root.manager.current = 'participante'
                 root.manager.transition.direction = 'left'
         MyButton:
             text: 'TT AC/DF'
             on_release:
+                root.manager.letters = 'TT AC/DF'
                 root.manager.current = 'participante'
                 root.manager.transition.direction = 'left'
         MyButton:
             text: 'TT CA/FD'
             on_release:
+                root.manager.letters = 'TT CA/FD'
                 root.manager.current = 'participante'
                 root.manager.transition.direction = 'left'
         MyButton:
@@ -290,6 +295,231 @@
 
 
 <TelaTreinoDE>:
+    targetPictures: [_t1]
+    LabelAcertosTotal:
+        text: app.root.acertos_total_str
+    LabelAcertosLatencia:
+        text: app.root.latencia_acerto_str
+    LabelTempoTotal:
+        text: app.root.tempo_decorrido_str
+    LabelErrosTotal:
+        text: app.root.erros_total_str
+    LabelErrosLatencia:
+        text: app.root.latencia_erro_str
+    LabelTelaAtual:
+        text: root.telaatual
+    Smile:
+        id: _smile1
+        pos: 555, 847
+    TargetPicture:
+        id: _t1
+        wid: 'wid-t1'
+        pos: 800, 840
+        size: 320, 240
+        size_hint_x: None
+        size_hint_y: None
+        canvas.before:
+            Color:
+                rgb: self.rbgcolor
+            Rectangle:
+                pos: self.pos
+                size: self.size
+        Imagem:
+            id: _ti1
+            wid: 'wid-ti1'
+            source: self._imagem
+            pos: self.parent.pos[0] + ((self.parent.width - self.width) / 2 ), self.parent.pos[1] + ((self.parent.height - self.height) / 2 )
+            size: self.parent.width * 0.90, self.parent.height * 0.90
+            fit_mode: 'fill'
+    SourcePicture:
+        id: _s1
+        wid: 'wid-s1'
+        pos: 80, 200
+        size: 320, 240
+        size_hint_x: None
+        size_hint_y: None
+        canvas.before:
+            Color:
+                rgb: self.rbgcolor
+            Rectangle:
+                pos: self.pos
+                size: self.size
+        Imagem:
+            id: _si1
+            wid: 'wid-si1'
+            source: self._imagem
+            pos: self.parent.pos[0] + ((self.parent.width - self.width) / 2 ), self.parent.pos[1] + ((self.parent.height - self.height) / 2 )
+            size: self.parent.width * 0.90, self.parent.height * 0.90
+            fit_mode: 'fill'
+    SourcePicture:
+        id: _s2
+        wid: 'wid-s2'
+        pos: 80, 840
+        size: 320, 240
+        size_hint_x: None
+        size_hint_y: None
+        canvas.before:
+            Color:
+                rgb: self.rbgcolor
+            Rectangle:
+                pos: self.pos
+                size: self.size
+        Imagem:
+            id: _si2
+            wid: 'wid-si2'
+            source: self._imagem
+            pos: self.parent.pos[0] + ((self.parent.width - self.width) / 2 ), self.parent.pos[1] + ((self.parent.height - self.height) / 2 )
+            size: self.parent.width * 0.90, self.parent.height * 0.90
+            fit_mode: 'fill'
+    SourcePicture:
+        id: _s3
+        wid: 'wid-s3'
+        pos: 80, 1480
+        size: 320, 240
+        size_hint_x: None
+        size_hint_y: None
+        canvas.before:
+            Color:
+                rgb: self.rbgcolor
+            Rectangle:
+                pos: self.pos
+                size: self.size
+        Imagem:
+            id: _si3
+            wid: 'wid-si3'
+            source: self._imagem
+            size: self.parent.width * 0.90, self.parent.height * 0.90
+            pos: self.parent.pos[0] + ((self.parent.width - self.width) / 2 ), self.parent.pos[1] + ((self.parent.height - self.height) / 2 )
+            fit_mode: 'fill'
+
+<TelaTesteTTAB>:
+    targetPictures: [_t1, _t2, _t3]
+    LabelAcertosTotal:
+        text: app.root.acertos_total_str
+    LabelAcertosLatencia:
+        text: app.root.latencia_acerto_str
+    LabelTempoTotal:
+        text: app.root.tempo_decorrido_str
+    LabelErrosTotal:
+        text: app.root.erros_total_str
+    LabelErrosLatencia:
+        text: app.root.latencia_erro_str
+    LabelTelaAtual:
+        text: root.telaatual
+    Smile:
+        id: _smile1
+        pos: 555, 207
+    Smile:
+        id: _smile2
+        pos: 555, 847
+    Smile:
+        id: _smile3
+        pos: 555, 1487
+    TargetPicture:
+        id: _t1
+        wid: 'wid-t1'
+        pos: 800, 200
+        size: 320, 240
+        size_hint_x: None
+        size_hint_y: None
+        canvas.before:
+            Color:
+                rgb: self.rbgcolor
+            Rectangle:
+                pos: self.pos
+                size: self.size
+        Imagem:
+            id: _ti1
+            wid: 'wid-ti1'
+            source: self._imagem
+            pos: self.parent.pos[0] + ((self.parent.width - self.width) / 2 ), self.parent.pos[1] + ((self.parent.height - self.height) / 2 )
+            size: self.parent.width * 0.90, self.parent.height * 0.90
+            fit_mode: 'fill'
+    TargetPicture:
+        id: _t2
+        wid: 'wid-t2'
+        pos: 800, 840
+        size: 320, 240
+        size_hint_x: None
+        size_hint_y: None
+        canvas.before:
+            Color:
+                rgb: self.rbgcolor
+            Rectangle:
+                pos: self.pos
+                size: self.size
+        Imagem:
+            id: _ti2
+            wid: 'wid-ti2'
+            source: self._imagem
+            pos: self.parent.pos[0] + ((self.parent.width - self.width) / 2 ), self.parent.pos[1] + ((self.parent.height - self.height) / 2 )
+            size: self.parent.width * 0.90, self.parent.height * 0.90
+            fit_mode: 'fill'
+    TargetPicture:
+        id: _t3
+        wid: 'wid-t3'
+        pos: 800, 1480
+        size: 320, 240
+        size_hint_x: None
+        size_hint_y: None
+        canvas.before:
+            Color:
+                rgb: self.rbgcolor
+            Rectangle:
+                pos: self.pos
+                size: self.size
+        Imagem:
+            id: _ti3
+            wid: 'wid-ti3'
+            source: self._imagem
+            pos: self.parent.pos[0] + ((self.parent.width - self.width) / 2 ), self.parent.pos[1] + ((self.parent.height - self.height) / 2 )
+            size: self.parent.width * 0.90, self.parent.height * 0.90
+            fit_mode: 'fill'
+    SourcePicture:
+        id: _s1
+        wid: 'wid-s1'
+        pos: 80, 200
+        size: 320, 240
+        size_hint_x: None
+        size_hint_y: None
+        Imagem:
+            id: _si1
+            wid: 'wid-si1'
+            source: self._imagem
+            pos: self.parent.pos[0] + ((self.parent.width - self.width) / 2 ), self.parent.pos[1] + ((self.parent.height - self.height) / 2 )
+            size: self.parent.width * 0.90, self.parent.height * 0.90
+            fit_mode: 'fill'
+    SourcePicture:
+        id: _s2
+        wid: 'wid-s2'
+        pos: 80, 840
+        size: 320, 240
+        size_hint_x: None
+        size_hint_y: None
+        Imagem:
+            id: _si2
+            wid: 'wid-si2'
+            source: self._imagem
+            pos: self.parent.pos[0] + ((self.parent.width - self.width) / 2 ), self.parent.pos[1] + ((self.parent.height - self.height) / 2 )
+            size: self.parent.width * 0.90, self.parent.height * 0.90
+            fit_mode: 'fill'
+    SourcePicture:
+        id: _s3
+        wid: 'wid-s3'
+        pos: 80, 1480
+        size: 320, 240
+        size_hint_x: None
+        size_hint_y: None
+        Imagem:
+            id: _si3
+            wid: 'wid-si3'
+            source: self._imagem
+            pos: self.parent.pos[0] + ((self.parent.width - self.width) / 2 ), self.parent.pos[1] + ((self.parent.height - self.height) / 2 )
+            size: self.parent.width * 0.90, self.parent.height * 0.90
+            fit_mode: 'fill'
+
+
+<TelaTesteTTDE>:
     targetPictures: [_t1]
     LabelAcertosTotal:
         text: app.root.acertos_total_str

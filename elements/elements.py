@@ -56,7 +56,6 @@ class SourcePicture(Label):
                 self.reset_colors()
                 # coloca source na origem
                 # self.parent.colocar_source_na_origem(self.clicked_wid)
-                self.parent.incrementa_acerto()
                 self.parent.show_smile(id_widget_target[len(id_widget_target) - 1])
                 self.parent.write_attempt(HitError.HIT, id_widget_source, id_widget_target)
                 self.parent.remove_widget(self)

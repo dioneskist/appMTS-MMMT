@@ -29,6 +29,7 @@ class TelaTreinoDE(Screen):
     acertos = 0
     erros = 0
     telaatual = StringProperty()
+    should_show_smile = True
 
     def __init__(self, **kw):
         super(TelaTreinoDE, self).__init__(**kw)
@@ -52,48 +53,14 @@ class TelaTreinoDE(Screen):
     # b_2
     def popula_imagens_source(self):
         self.ids._si1._imagem = 'figuras/' + self.ordem + '/' + self.get_figura_source(1) + '.jpg'
-        print(self.ids._si1._imagem)
-        print(self.get_figura_source(1))
         self.ids._si2._imagem = 'figuras/' + self.ordem + '/' + self.get_figura_source(2) + '.jpg'
-        print(self.ids._si2._imagem)
-        print(self.get_figura_source(2))
         self.ids._si3._imagem = 'figuras/' + self.ordem + '/' + self.get_figura_source(3) + '.jpg'
-        print(self.ids._si3._imagem)
-        print(self.get_figura_source(3))
-        # logging.debug('popula_imagens_source: Iniciando carregamento da imagens para sourcePictures')
-        # logging.debug('popula_imagens_source: Existem {} combinacoes'.format(self.combinacoes))
-        # # carrega filhos do world (target, source, smile)
-        # contador_figura = 0
-        # for child in self.children:
-        #     if type(child) == SourcePicture:
-        #         # carrega filhos do source (imagem)
-        #         for image in child.children:
-        #             figura = self.get_figura_source(contador_figura)
-        #             logging.debug('popula_imagens_source: Associada figura {} com wid=[{}]'.format(figura, image.wid))
-        #             imagem_name = 'figuras/' + self.ordem + '/' + figura + '.jpg'
-        #             image.__self__._imagem = imagem_name
-        #             contador_figura += 1
 
     # popular imagens para todos os targetPictures
     # a_1
     # b_2
     def popula_imagens_target(self):
         self.ids._ti1._imagem = 'figuras/' + self.ordem + '/' + self.get_figura_target() + '.jpg'
-        print(self.ids._ti1._imagem)
-        print(self.get_figura_target())
-        # logging.debug('popula_imagens_target: Iniciando carregamento da imagens para targetPictures')
-        # logging.debug('popula_imagens_target: Existem {} combinacoes'.format(self.combinacoes))
-        # # carrega filhos do world (target, source, smile)
-        # for child in self.children:
-        #     # print(id(child))
-        #     # print(type(child))
-        #     if type(child) == TargetPicture:
-        #         # carrega filhos do target (imagem)
-        #         for image in child.children:
-        #             figura = self.get_figura_target()
-        #             logging.debug('popula_imagens_target: Associada figura {} com wid=[{}]'.format(figura, image.wid))
-        #             imagem_name = 'figuras/' + self.ordem + '/' + figura + '.jpg'
-        #             image.__self__._imagem = imagem_name
 
     def get_figura_target(self):
         figura = self.combinacoes[0]
@@ -225,7 +192,8 @@ class TelaTreinoDE(Screen):
     def apagar_smiles(self, apagar_widget_id, *args, **keywords):
         logging.debug('apagar_smiles: removido smiles wid={}'.format(apagar_widget_id))
         self.remove_widget(apagar_widget_id)
-        self.validate_troca_tela()
+        self.incrementa_acerto()
+
 
     def incrementa_erro(self):
         logging.debug('Telateste.incrementa_erro: incrementando erros de {} para {}'.format(self.erros, self.erros + 1))
@@ -268,6 +236,7 @@ class TelaTreinoDE(Screen):
         self.manager.latencia_acerto_str = "Latência: {0:.2f}".format(
             Clock.get_time() - self.manager.latencia) + ' segundos'
         self.manager.acertos_consecutivos()
+        self.validate_troca_tela()
 
     def validate_troca_tela(self):
         if self.acertos == 1:
@@ -276,8 +245,8 @@ class TelaTreinoDE(Screen):
 
     def troca_tela(self, delta):
         Clock.unschedule(self.troca_tela)
-        self.manager.tela_treinoDE_finished = True
-        self.manager.tela_treinoDE_respondidas += 1
+        self.manager.tela_DE_finished = True
+        self.manager.tela_DE_respondidas += 1
         self.manager.troca_tela()
 
 

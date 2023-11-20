@@ -19,6 +19,8 @@ from elements.resultlog import ResultLog
 from telas.blanktela import BlankTela
 from telas.instrucoes import TelaInstrucoes
 from telas.menu import Menu
+from telas.telatestettab import TelaTesteTTAB
+from telas.telatestettde import TelaTesteTTDE
 from telas.telatt import TelaTT
 from telas.telatreinode import TelaTreinoDE
 from telas.telatreinoab import TelaTreinoAB
@@ -98,17 +100,17 @@ def gerar_todas_combinacoes(list1, list2, combinacoes_teste_DE=False):
 
 class GerenciadorDeTelas(ScreenManager):
     # flag para informar se a TelaTreinoAB foi respondida
-    tela_treinoAB_finished = False
-    tela_treinoDE_finished = False
+    tela_AB_finished = False
+    tela_DE_finished = False
 
     # flag para informar a tela atual
-    tela_treinoAB_current = 0
-    tela_treinoDE_current = 0
+    tela_AB_current = 0
+    tela_DE_current = 0
     all_combinacoes_XY = None
     all_combinacoes_ZW = None
 
     # flag para contar a quantidade de telas treinoDE respondidas após a tela treino
-    tela_treinoDE_respondidas = 0
+    tela_DE_respondidas = 0
 
     """
         flag para contar quantas rodadas foram realizadas
@@ -151,9 +153,12 @@ class GerenciadorDeTelas(ScreenManager):
 
     # primeira tela
     primeira_tela = None
+    ultima = None
 
     # proxima
     proxima = ""
+    screen_name_AB = ""
+    screen_name_DE = ""
 
     # total de telas validas para cada tipo
     total_telasAB_validas = 0
@@ -174,22 +179,23 @@ class GerenciadorDeTelas(ScreenManager):
         self.consecutive_hists = 0
 
     def get_next_tela(self, next_expected):
-        if next_expected == 'TelaTreinoAB':
-            if self.tela_treinoAB_current >= self.total_telasAB_validas - 1:  # (0 a 35) >= 35
+
+        if next_expected in self.screen_name_AB:
+            if self.tela_AB_current >= self.total_telasAB_validas - 1:  # (0 a 35) >= 35
                 return str(0)
             else:
-                self.tela_treinoAB_current += 1
-            return str(self.tela_treinoAB_current)
-        if next_expected == 'TelaTreinoDE':
-            if self.tela_treinoDE_respondidas == 0 and self.tela_treinoDE_current == 0:  # first screen
-                return str(self.tela_treinoDE_current)
+                self.tela_AB_current += 1
+                return str(self.tela_AB_current)
+        if next_expected in self.screen_name_DE:
+            if self.tela_DE_respondidas == 0 and self.tela_DE_current == 0:  # first screen
+                return str(0)
             else:
-                if self.tela_treinoDE_current >= self.total_telasDE_validas - 1:  # (0 a 17) >= 17
-                    self.tela_treinoDE_current = 0
-                    return str(self.tela_treinoDE_current)
+                if self.tela_DE_current >= self.total_telasDE_validas - 1:  # (0 a 17) >= 17
+                    self.tela_DE_current = 0
+                    return str(0)
                 else:
-                    self.tela_treinoDE_current += 1
-                    return str(self.tela_treinoDE_current)
+                    self.tela_DE_current += 1
+                    return str(self.tela_DE_current)
 
     def comecar(self):
         """
@@ -211,7 +217,7 @@ class GerenciadorDeTelas(ScreenManager):
 
         if 'PT AB/DE' in self.letters:
             """
-            for para criar as telas de treino com todas as combinacoes possiveis entre (x1,x2,x3 e y1,y2,y3)
+            for para criar as telas de pre-treino com todas as combinacoes possiveis entre (x1,x2,x3 e y1,y2,y3)
             e (y1,y1,y3 e w1)
             tela treino usa as letras da posica 3 e 4 (AB) 'TR AB/DE'
             """
@@ -232,17 +238,19 @@ class GerenciadorDeTelas(ScreenManager):
 
             self.total_telasAB_validas = len(self.all_combinacoes_XY)
             self.total_telasDE_validas = len(self.all_combinacoes_ZW)
+            self.screen_name_AB = ''
+            self.screen_name_DE = ''
 
             # cria primeira tela AB ou BC para comecar
             self.adiciona_tela(
-                TelaTreinoAB(name='TelaTreinoAB_' + str(self.tela_treinoAB_current),
-                             combinacoes=self.all_combinacoes_XY[self.tela_treinoAB_current],
+                TelaTreinoAB(name='TelaTreinoAB_' + str(self.tela_AB_current),
+                             combinacoes=self.all_combinacoes_XY[self.tela_AB_current],
                              ordem=self.ordem))
 
-            logging.debug('comecar: configurado telaAB_{} com combinacao={}'.format(self.tela_treinoAB_current,
+            logging.debug('comecar: configurado telaAB_{} com combinacao={}'.format(self.tela_AB_current,
                                                                                     self.all_combinacoes_XY[
-                                                                                        self.tela_treinoAB_current]))
-            self.primeira_tela = 'TelaTreinoAB_' + str(self.tela_treinoAB_current)
+                                                                                        self.tela_AB_current]))
+            self.primeira_tela = 'TelaTreinoAB_' + str(self.tela_AB_current)
 
         # valida se o é treino
         if 'TR AB' in self.letters or 'TR BC' in self.letters:
@@ -268,17 +276,19 @@ class GerenciadorDeTelas(ScreenManager):
 
             self.total_telasAB_validas = len(self.all_combinacoes_XY)
             self.total_telasDE_validas = len(self.all_combinacoes_ZW)
+            self.screen_name_AB = 'TelaTreinoAB_'
+            self.screen_name_DE = 'TelaTreinoDE_'
 
             # cria primeira tela AB ou BC para comecar
             self.adiciona_tela(
-                TelaTreinoAB(name='TelaTreinoAB_' + str(self.tela_treinoAB_current),
-                             combinacoes=self.all_combinacoes_XY[self.tela_treinoAB_current],
+                TelaTreinoAB(name='TelaTreinoAB_' + str(self.tela_AB_current),
+                             combinacoes=self.all_combinacoes_XY[self.tela_AB_current],
                              ordem=self.ordem))
 
-            logging.debug('comecar: configurado telaAB_{} com combinacao={}'.format(self.tela_treinoAB_current,
+            logging.debug('comecar: configurado telaAB_{} com combinacao={}'.format(self.tela_AB_current,
                                                                                     self.all_combinacoes_XY[
-                                                                                        self.tela_treinoAB_current]))
-            self.primeira_tela = 'TelaTreinoAB_' + str(self.tela_treinoAB_current)
+                                                                                        self.tela_AB_current]))
+            self.primeira_tela = 'TelaTreinoAB_' + str(self.tela_AB_current)
 
         # valida se o é misto
         if 'TR Misto' in self.letters:
@@ -302,8 +312,35 @@ class GerenciadorDeTelas(ScreenManager):
         #     self.current = 'TelaTreinoAB0'
         #     self.transition.direction = 'left'
         if 'TT' in self.letters:
-            self.primeira_tela = 'TelaTeste_0'
-            pass
+            self.total_acertos_necessarios = 12
+            self.tempo_maximo = 600.0
+
+            letter_x = str(self.letters[3]).lower()
+            letter_y = str(self.letters[4]).lower()
+            letter_z = str(self.letters[6]).lower()
+            letter_w = str(self.letters[7]).lower()
+            list_x = itertools.permutations([letter_x + '_1', letter_x + '_2', letter_x + '_3'], 3)
+            list_y = itertools.permutations([letter_y + '_1', letter_y + '_2', letter_y + '_3'], 3)
+            list_z = itertools.permutations([letter_z + '_1', letter_z + '_2', letter_z + '_3'], 1)
+            list_w = itertools.permutations([letter_w + '_1', letter_w + '_2', letter_w + '_3'], 3)
+            self.all_combinacoes_XY = gerar_todas_combinacoes(list_y, list_x, False)
+            self.all_combinacoes_ZW = gerar_todas_combinacoes(list_z, list_w, combinacoes_teste_DE=True)
+
+            self.total_telasAB_validas = len(self.all_combinacoes_XY)
+            self.total_telasDE_validas = len(self.all_combinacoes_ZW)
+            self.screen_name_AB = 'TelaTesteTTAB_'
+            self.screen_name_DE = 'TelaTesteTTDE_'
+
+            # cria primeira tela AB ou BC para comecar
+            self.adiciona_tela(
+                TelaTesteTTAB(name=self.screen_name_AB + str(self.tela_AB_current),
+                              combinacoes=self.all_combinacoes_XY[self.tela_AB_current],
+                              ordem=self.ordem))
+
+            logging.debug('comecar: configurado telaAB_{} com combinacao={}'.format(self.tela_AB_current,
+                                                                                    self.all_combinacoes_XY[
+                                                                                        self.tela_AB_current]))
+            self.primeira_tela = self.screen_name_AB + str(self.tela_AB_current)
 
     def iniciar_Time(self):
         self.time_inicio = Clock.get_time()
@@ -344,6 +381,32 @@ class GerenciadorDeTelas(ScreenManager):
         self.result_log.write_result_file()
         self.result_log.write_excel_file()
 
+    def generate_next_tela(self, proxima):
+        logging.debug('generate_next_tela: next tela {}'.format(proxima))
+        if 'Teste' in proxima:
+            if 'AB' in proxima:
+                tela = TelaTesteTTAB(name=proxima, combinacoes=self.all_combinacoes_XY[self.tela_AB_current],
+                                     ordem=self.ordem)
+                logging.debug('generate_next_tela Gerada tela {} {}'.format(tela.name, tela))
+                return tela
+            else:
+                tela = TelaTesteTTDE(name=proxima, combinacoes=self.all_combinacoes_ZW[self.tela_DE_current],
+                                     ordem=self.ordem)
+                logging.debug('generate_next_tela Gerada tela {} {}'.format(tela.name, tela))
+                return tela
+
+        elif 'Treino' in proxima:
+            if 'AB' in proxima:
+                tela = TelaTreinoAB(name=proxima, combinacoes=self.all_combinacoes_XY[self.tela_AB_current],
+                                    ordem=self.ordem)
+                logging.debug('generate_next_tela Gerada tela {} {}'.format(tela.name, tela))
+                return tela
+            else:
+                tela = TelaTreinoDE(name=proxima, combinacoes=self.all_combinacoes_ZW[self.tela_DE_current],
+                                    ordem=self.ordem)
+                logging.debug('generate_next_tela Gerada tela {} {}'.format(tela.name, tela))
+                return tela
+
     def troca_tela(self):
 
         """
@@ -367,7 +430,7 @@ class GerenciadorDeTelas(ScreenManager):
         logging.debug('Main.troca_tela: tempo decorrido entre acerto anterior e agora {}.'.format(tempo_decorrido))
 
         # valida final dos treinos e testes
-        if self.acertos_total == self.total_acertos_necessarios or tempo_decorrido > self.tempo_maximo:
+        if self.acertos_total == self.total_acertos_necessarios or tempo_decorrido >= self.tempo_maximo:
             tela_final = ''
             logging.debug('Main.troca_tela: total de acertos {}.'.format(self.acertos_total))
             logging.debug('Main.troca_tela: tela final sera chamada {}.'.format(tela_final))
@@ -376,52 +439,40 @@ class GerenciadorDeTelas(ScreenManager):
             self.acertos_total_str = str(self.acertos_total)
             self.erros_total = 0
             self.erros_total_str = str(self.erros_total)
-            self.tela_teste_respondidas = 0
             self.add_widget(TelaFinal(name=tela_final))
             self.current = tela_final
         else:
             logging.debug('Main.troca_tela: total de acertos até o momento é {}.'.format(self.acertos_total))
+            tela_atual = self.current
+            self.ultima = self.current
 
-            if self.tela_treinoAB_finished:
-                self.tela_treinoAB_finished = False
-                tela_atual = self.current
-                proxima = 'TelaTreinoDE_' + self.get_next_tela('TelaTreinoDE')
+            if self.tela_AB_finished:
+                self.tela_AB_finished = False
+                proxima = self.screen_name_DE + self.get_next_tela(self.screen_name_DE)
+                print(proxima)
                 logging.debug('Main.troca_tela: trocando da tela {} para {}'.format(tela_atual, proxima))
-                self.adiciona_tela(
-                    TelaTreinoDE(name=proxima,
-                                 combinacoes=self.all_combinacoes_ZW[self.tela_treinoDE_current],
-                                 ordem=self.ordem))
-                self.ultima = self.current
+                self.adiciona_tela(self.generate_next_tela(proxima))
                 self.proxima = proxima
 
                 # add blanktela and add schedule
                 self.show_blanktela(1.5)
 
-            if self.tela_treinoDE_finished:
-                if self.tela_treinoDE_respondidas == 3:
-                    self.tela_treinoDE_finished = False
-                    self.tela_treinoDE_respondidas = 0
-                    tela_atual = self.current
-                    proxima = 'TelaTreinoAB_' + self.get_next_tela('TelaTreinoAB')
-                    self.adiciona_tela(
-                        TelaTreinoAB(name=proxima, combinacoes=self.all_combinacoes_XY[self.tela_treinoAB_current],
-                                     ordem=self.ordem))
-                    logging.debug('Main.troca_tela: trocando da tela {} para {}'.format(tela_atual, proxima))
-                    self.ultima = self.current
+            if self.tela_DE_finished:
+                self.tela_DE_finished = False
+                if self.tela_DE_respondidas == 3:
+                    self.tela_DE_respondidas = 0
+                    proxima = self.screen_name_AB + self.get_next_tela(self.screen_name_AB)
+                    self.adiciona_tela(self.generate_next_tela(proxima))
 
+                    logging.debug('Main.troca_tela: trocando da tela {} para {}'.format(tela_atual, proxima))
                     self.proxima = proxima
 
                     # add blanktela and add schedule
                     self.show_blanktela(0.5)
                 else:
-                    self.tela_treinoDE_finished = False
-                    tela_atual = self.current
-                    proxima = 'TelaTreinoDE_' + self.get_next_tela('TelaTreinoDE')
-                    self.adiciona_tela(
-                        TelaTreinoDE(name=proxima, combinacoes=self.all_combinacoes_ZW[self.tela_treinoDE_current],
-                                     ordem=self.ordem))
+                    proxima = self.screen_name_DE + self.get_next_tela(self.screen_name_DE)
+                    self.adiciona_tela(self.generate_next_tela(proxima))
                     logging.debug('Main.troca_tela: trocando da tela {} para {}'.format(tela_atual, proxima))
-                    self.ultima = self.current
                     self.proxima = proxima
 
                     # add blanktela and add schedule
@@ -434,10 +485,9 @@ class GerenciadorDeTelas(ScreenManager):
 
     def apagar_blanktela(self, delta_time):
         logging.debug('remove_tela: tela {} apagada'.format("blanktela"))
-        Clock.unschedule(self.apagar_blanktela)
         self.current = self.proxima
         self.remove_tela(self.ultima)
-        self.remove_widget(self.get_screen("blanktela"))
+        self.remove_tela("blanktela")
 
     def remove_tela(self, tela):
         try:

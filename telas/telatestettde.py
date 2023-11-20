@@ -30,70 +30,40 @@ class TelaTesteTTDE(Screen):
     erros = 0
     telaatual = StringProperty()
 
+    should_show_smile = False
+    should_restore_source = False
+
     def __init__(self, **kw):
         super(TelaTesteTTDE, self).__init__(**kw)
-        # popula imagens inicias
-        self.popula_imagens_target()
-        self.popula_imagens_source()
 
         logging.debug('TelaTesteTTDE.__init__:')
         logging.debug('TelaTesteTTDE.__init__: combinacoes {}'.format(self.combinacoes))
 
-    # def on_enter(self, *args):
-    #     logging.debug('tela: {} com ids: {}'.format(self.name, self.ids))
-    #     self.manager.latencia = Clock.get_time()
-    #     self.telaatual = self.parent.current
-    #
-    # def on_leave(self, *args):
-    #     logging.debug('on_leave: {} com ids: {}'.format(self.name, self.ids))
+    def on_enter(self, *args):
+        # popula imagens inicias
+        self.popula_imagens_target()
+        self.popula_imagens_source()
+        logging.debug('tela: {} com ids: {}'.format(self.name, self.ids))
+        self.manager.latencia = Clock.get_time()
+        self.telaatual = self.parent.current
+
+    def on_leave(self, *args):
+        logging.debug('on_leave: {} com ids: {}'.format(self.name, self.ids))
 
     # popular imagens para todos os sourcesPictures
     # a_1
     # b_2
     def popula_imagens_source(self):
         self.ids._si1._imagem = 'figuras/' + self.ordem + '/' + self.get_figura_source(1) + '.jpg'
-        print(self.ids._si1._imagem)
-        print(self.get_figura_source(1))
         self.ids._si2._imagem = 'figuras/' + self.ordem + '/' + self.get_figura_source(2) + '.jpg'
-        print(self.ids._si2._imagem)
-        print(self.get_figura_source(2))
         self.ids._si3._imagem = 'figuras/' + self.ordem + '/' + self.get_figura_source(3) + '.jpg'
-        print(self.ids._si3._imagem)
-        print(self.get_figura_source(3))
-        # logging.debug('popula_imagens_source: Iniciando carregamento da imagens para sourcePictures')
-        # logging.debug('popula_imagens_source: Existem {} combinacoes'.format(self.combinacoes))
-        # # carrega filhos do world (target, source, smile)
-        # contador_figura = 0
-        # for child in self.children:
-        #     if type(child) == SourcePicture:
-        #         # carrega filhos do source (imagem)
-        #         for image in child.children:
-        #             figura = self.get_figura_source(contador_figura)
-        #             logging.debug('popula_imagens_source: Associada figura {} com wid=[{}]'.format(figura, image.wid))
-        #             imagem_name = 'figuras/' + self.ordem + '/' + figura + '.jpg'
-        #             image.__self__._imagem = imagem_name
-        #             contador_figura += 1
 
     # popular imagens para todos os targetPictures
     # a_1
     # b_2
     def popula_imagens_target(self):
         self.ids._ti1._imagem = 'figuras/' + self.ordem + '/' + self.get_figura_target() + '.jpg'
-        print(self.ids._ti1._imagem)
-        print(self.get_figura_target())
-        # logging.debug('popula_imagens_target: Iniciando carregamento da imagens para targetPictures')
-        # logging.debug('popula_imagens_target: Existem {} combinacoes'.format(self.combinacoes))
-        # # carrega filhos do world (target, source, smile)
-        # for child in self.children:
-        #     # print(id(child))
-        #     # print(type(child))
-        #     if type(child) == TargetPicture:
-        #         # carrega filhos do target (imagem)
-        #         for image in child.children:
-        #             figura = self.get_figura_target()
-        #             logging.debug('popula_imagens_target: Associada figura {} com wid=[{}]'.format(figura, image.wid))
-        #             imagem_name = 'figuras/' + self.ordem + '/' + figura + '.jpg'
-        #             image.__self__._imagem = imagem_name
+
 
     def get_figura_target(self):
         figura = self.combinacoes[0]
@@ -181,103 +151,110 @@ class TelaTesteTTDE(Screen):
                         # print(image.__self__.source)
                         return self.get_letter_and_number_from_source(image.__self__.source)
 
-        # def colocar_source_na_origem(self, id_widget_source):
-        #     logging.debug('colocar_source_na_origem: app size: {}wX{}h'.format(self.width, self.height))
-        #     logging.debug('colocar_source_na_origem: Reorganizando sourcePicture wid=[{}]'.format(id_widget_source))
-        #     if id_widget_source == 'wid-s1':
-        #         self.ids._s1.pos = 80, 200
-        #         logging.debug('colocar_source_na_origem: colocado wid [{}] na posicao x={}, y={}'.format(self.ids._s1.wid,
-        #                                                                                                  self.ids._s1.pos[
-        #                                                                                                      0],
-        #                                                                                                  self.ids._s1.pos[
-        #                                                                                                      1]))
-        #     if id_widget_source == 'wid-s2':
-        #         self.ids._s2.pos = 80, 840
-        #         logging.debug('colocar_source_na_origem: colocado wid [{}] na posicao x={}, y={}'.format(self.ids._s2.wid,
-        #                                                                                                  self.ids._s2.pos[
-        #                                                                                                      0],
-        #                                                                                                  self.ids._s2.pos[
-        #                                                                                                      1]))
-        #     if id_widget_source == 'wid-s3':
-        #         self.ids._s3.pos = 80, 1480
-        #         logging.debug('colocar_source_na_origem: colocado wid [{}] na posicao x={}, y={}'.format(self.ids._s3.wid,
-        #                                                                                                  self.ids._s3.pos[
-        #                                                                                                      0],
-        #                                                                                                  self.ids._s3.pos[
-        #                                                                                                      1]))
-        #
-        # def show_smile(self, number):
-        #     logging.debug('show_smile: colocando smile {}'.format(number))
-        #     if int(number) == 1:
-        #         self.ids._smile1.source = 'figuras/smile.png'
-        #         apagar_widget_id = self.ids._smile1
-        #         self.desaparecer_smile(apagar_widget_id)
-        #
-        # def desaparecer_smile(self, apagar_widget_id):
-        #     logging.debug('desaparecer_smile: smile a ser retirado wis={}'.format(apagar_widget_id))
-        #     callback = self.apagar_smiles
-        #     timeout = 2.0
-        #     logging.debug(
-        #         'desaparecer_smile: scheduled {} with {} timeout for smile wid={}'.format(callback.__name__, timeout,
-        #                                                                                   apagar_widget_id))
-        #     Clock.schedule_once(partial(callback, apagar_widget_id, apagar_widget_id), timeout)
-        #
-        # def apagar_smiles(self, apagar_widget_id, *args, **keywords):
-        #     logging.debug('apagar_smiles: removido smiles wid={}'.format(apagar_widget_id))
-        #     self.remove_widget(apagar_widget_id)
-        #     self.validate_troca_tela()
-        #
-        # def incrementa_erro(self):
-        #     logging.debug('TelaTesteTTDE.incrementa_erro: incrementando erros de {} para {}'.format(self.erros, self.erros + 1))
-        #     self.erros += 1
-        #     self.manager.acertos_total = 0
-        #     self.manager.acertos_total_str = 'Acertos:  ' + str(self.manager.acertos_total)
-        #     self.manager.erros_total += 1
-        #     self.manager.erros_total_str = 'Erros:  ' + str(self.manager.erros_total)
-        #     self.manager.latencia_erro_str = "Latencia erro: {0:.2f}".format(
-        #         Clock.get_time() - self.manager.latencia) + ' segundos'
-        #     self.manager.erros_consecutivos()
-        #
-        # def write_attempt(self, hit_error, id_widget_source, id_widget_target):
-        #     logging.debug(
-        #         'TelaTesteTTDE.write_attempt: writing attempt Hit?{}:{} {}-{}'.format(hit_error, hit_error.value,
-        #                                                                              id_widget_source, id_widget_target))
-        #
-        #     letter_number_figura_s = self.get_imagens_source('wid-si' + str(id_widget_source[len(id_widget_source) - 1]))
-        #     letter_number_figura_t = self.get_imagens_target('wid-ti' + str(id_widget_target[len(id_widget_target) - 1]))
-        #
-        #     # key_comparation is the position on the screen in inverter order
-        #     # position 1 return 3; 2 return 2 and 3 return 1
-        #     attempt = Attempt(comparation=letter_number_figura_s,
-        #                       key_comparation=get_position(id_widget_source[len(id_widget_source) - 1]),
-        #                       model=letter_number_figura_t,
-        #                       key_model=get_position(id_widget_target[len(id_widget_target) - 1]),
-        #                       hit_or_error=hit_error.value,
-        #                       latency_from_screen=datetime.now() - self.manager.start_screen_time,
-        #                       consecutive_hits=self.manager.consecutive_hists)
-        #
-        #     print(attempt)
-        #     self.manager.result_log.write_attempt(attempt)
-        #
-        # def incrementa_acerto(self):
-        #     logging.debug(
-        #         'TelaTesteTTDE.incrementa_acerto: incrementando acertos de {} para {}'.format(self.acertos, self.acertos + 1))
-        #     self.acertos += 1
-        #     self.manager.acertos_total += 1
-        #     self.manager.acertos_total_str = 'Acertos:  ' + str(self.manager.acertos_total)
-        #     self.manager.latencia_acerto_str = "Latência: {0:.2f}".format(
-        #         Clock.get_time() - self.manager.latencia) + ' segundos'
-        #     self.manager.acertos_consecutivos()
-        #
-        # def validate_troca_tela(self):
-        #     if self.acertos == 1:
-        #         logging.info('TelaTesteTTDE.TTDEincrementa_acerto: ACERTOU TUDO ({} acertos) !!!'.format(self.acertos))
-        #         Clock.schedule_once(self.troca_tela, 0.5)
-        #
-        # def troca_tela(self, delta):
-        #     Clock.unschedule(self.troca_tela)
-        #     self.manager.tela_treinoDE_finished = True
-        self.manager.tela_treinoDE_respondidas += 1
+    def colocar_source_na_origem(self, id_widget_source):
+        logging.debug('colocar_source_na_origem: app size: {}wX{}h'.format(self.width, self.height))
+        logging.debug('colocar_source_na_origem: Reorganizando sourcePicture wid=[{}]'.format(id_widget_source))
+        if id_widget_source == 'wid-s1':
+            self.ids._s1.pos = 80, 200
+            logging.debug('colocar_source_na_origem: colocado wid [{}] na posicao x={}, y={}'.format(self.ids._s1.wid,
+                                                                                                     self.ids._s1.pos[
+                                                                                                         0],
+                                                                                                     self.ids._s1.pos[
+                                                                                                         1]))
+        if id_widget_source == 'wid-s2':
+            self.ids._s2.pos = 80, 840
+            logging.debug('colocar_source_na_origem: colocado wid [{}] na posicao x={}, y={}'.format(self.ids._s2.wid,
+                                                                                                     self.ids._s2.pos[
+                                                                                                         0],
+                                                                                                     self.ids._s2.pos[
+                                                                                                         1]))
+        if id_widget_source == 'wid-s3':
+            self.ids._s3.pos = 80, 1480
+            logging.debug('colocar_source_na_origem: colocado wid [{}] na posicao x={}, y={}'.format(self.ids._s3.wid,
+                                                                                                     self.ids._s3.pos[
+                                                                                                         0],
+                                                                                                     self.ids._s3.pos[
+                                                                                                         1]))
+
+    def show_smile(self, number):
+        if self.should_show_smile:
+            logging.debug('show_smile: colocando smile {}'.format(number))
+            if int(number) == 1:
+                self.ids._smile1.source = 'figuras/smile.png'
+                apagar_widget_id = self.ids._smile1
+                self.desaparecer_smile(apagar_widget_id)
+        else:
+            logging.debug('show_smile: smile don\'t show for Test TT'.format())
+            self.incrementa_acerto()
+    def desaparecer_smile(self, apagar_widget_id):
+        logging.debug('desaparecer_smile: smile a ser retirado wis={}'.format(apagar_widget_id))
+        callback = self.apagar_smiles
+        timeout = 2.0
+        logging.debug(
+            'desaparecer_smile: scheduled {} with {} timeout for smile wid={}'.format(callback.__name__, timeout,
+                                                                                      apagar_widget_id))
+        Clock.schedule_once(partial(callback, apagar_widget_id, apagar_widget_id), timeout)
+
+    def apagar_smiles(self, apagar_widget_id, *args, **keywords):
+        logging.debug('apagar_smiles: removido smiles wid={}'.format(apagar_widget_id))
+        self.remove_widget(apagar_widget_id)
+        self.incrementa_acerto()
+
+
+    def incrementa_erro(self):
+        logging.debug(
+            'TelaTesteTTDE.incrementa_erro: incrementando erros de {} para {}'.format(self.erros, self.erros + 1))
+        self.erros += 1
+        self.manager.acertos_total = 0
+        self.manager.acertos_total_str = 'Acertos:  ' + str(self.manager.acertos_total)
+        self.manager.erros_total += 1
+        self.manager.erros_total_str = 'Erros:  ' + str(self.manager.erros_total)
+        self.manager.latencia_erro_str = "Latencia erro: {0:.2f}".format(
+            Clock.get_time() - self.manager.latencia) + ' segundos'
+        self.manager.erros_consecutivos()
+
+    def write_attempt(self, hit_error, id_widget_source, id_widget_target):
+        logging.debug(
+            'TelaTesteTTDE.write_attempt: writing attempt Hit?{}:{} {}-{}'.format(hit_error, hit_error.value,
+                                                                                  id_widget_source, id_widget_target))
+
+        letter_number_figura_s = self.get_imagens_source('wid-si' + str(id_widget_source[len(id_widget_source) - 1]))
+        letter_number_figura_t = self.get_imagens_target('wid-ti' + str(id_widget_target[len(id_widget_target) - 1]))
+
+        # key_comparation is the position on the screen in inverter order
+        # position 1 return 3; 2 return 2 and 3 return 1
+        attempt = Attempt(comparation=letter_number_figura_s,
+                          key_comparation=get_position(id_widget_source[len(id_widget_source) - 1]),
+                          model=letter_number_figura_t,
+                          key_model=get_position(id_widget_target[len(id_widget_target) - 1]),
+                          hit_or_error=hit_error.value,
+                          latency_from_screen=datetime.now() - self.manager.start_screen_time,
+                          consecutive_hits=self.manager.consecutive_hists)
+
+        print(attempt)
+        self.manager.result_log.write_attempt(attempt)
+
+    def incrementa_acerto(self):
+        logging.debug(
+            'TelaTesteTTDE.incrementa_acerto: incrementando acertos de {} para {}'.format(self.acertos,
+                                                                                          self.acertos + 1))
+        self.acertos += 1
+        self.manager.acertos_total += 1
+        self.manager.acertos_total_str = 'Acertos:  ' + str(self.manager.acertos_total)
+        self.manager.latencia_acerto_str = "Latência: {0:.2f}".format(
+            Clock.get_time() - self.manager.latencia) + ' segundos'
+        self.manager.acertos_consecutivos()
+        self.validate_troca_tela()
+
+    def validate_troca_tela(self):
+        if self.acertos == 1:
+            logging.info('TelaTesteTTDE.incrementa_acerto: ACERTOU TUDO ({} acertos) !!!'.format(self.acertos))
+            Clock.schedule_once(self.troca_tela, 0.5)
+
+    def troca_tela(self, delta):
+        Clock.unschedule(self.troca_tela)
+        self.manager.tela_DE_finished = True
+        self.manager.tela_DE_respondidas += 1
         self.manager.troca_tela()
 
 
