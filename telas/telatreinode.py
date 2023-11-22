@@ -30,6 +30,7 @@ class TelaTreinoDE(Screen):
     erros = 0
     telaatual = StringProperty()
     should_show_smile = True
+    isTT = False
 
     def __init__(self, **kw):
         super(TelaTreinoDE, self).__init__(**kw)
@@ -232,6 +233,7 @@ class TelaTreinoDE(Screen):
             'Telateste.incrementa_acerto: incrementando acertos de {} para {}'.format(self.acertos, self.acertos + 1))
         self.acertos += 1
         self.manager.acertos_total += 1
+        self.manager.total_acertoserros_necessarios_saida += 1
         self.manager.acertos_total_str = 'Acertos:  ' + str(self.manager.acertos_total)
         self.manager.latencia_acerto_str = "Latência: {0:.2f}".format(
             Clock.get_time() - self.manager.latencia) + ' segundos'

@@ -31,7 +31,7 @@ class TelaTesteTTDE(Screen):
     telaatual = StringProperty()
 
     should_show_smile = False
-    should_restore_source = False
+    isTT = True
 
     def __init__(self, **kw):
         super(TelaTesteTTDE, self).__init__(**kw)
@@ -63,7 +63,6 @@ class TelaTesteTTDE(Screen):
     # b_2
     def popula_imagens_target(self):
         self.ids._ti1._imagem = 'figuras/' + self.ordem + '/' + self.get_figura_target() + '.jpg'
-
 
     def get_figura_target(self):
         figura = self.combinacoes[0]
@@ -186,6 +185,7 @@ class TelaTesteTTDE(Screen):
         else:
             logging.debug('show_smile: smile don\'t show for Test TT'.format())
             self.incrementa_acerto()
+
     def desaparecer_smile(self, apagar_widget_id):
         logging.debug('desaparecer_smile: smile a ser retirado wis={}'.format(apagar_widget_id))
         callback = self.apagar_smiles
@@ -200,18 +200,19 @@ class TelaTesteTTDE(Screen):
         self.remove_widget(apagar_widget_id)
         self.incrementa_acerto()
 
-
     def incrementa_erro(self):
         logging.debug(
             'TelaTesteTTDE.incrementa_erro: incrementando erros de {} para {}'.format(self.erros, self.erros + 1))
         self.erros += 1
         self.manager.acertos_total = 0
+        self.manager.total_acertoserros_necessarios_saida += 1
         self.manager.acertos_total_str = 'Acertos:  ' + str(self.manager.acertos_total)
         self.manager.erros_total += 1
         self.manager.erros_total_str = 'Erros:  ' + str(self.manager.erros_total)
         self.manager.latencia_erro_str = "Latencia erro: {0:.2f}".format(
             Clock.get_time() - self.manager.latencia) + ' segundos'
         self.manager.erros_consecutivos()
+        self.validate_troca_tela()
 
     def write_attempt(self, hit_error, id_widget_source, id_widget_target):
         logging.debug(
@@ -240,6 +241,7 @@ class TelaTesteTTDE(Screen):
                                                                                           self.acertos + 1))
         self.acertos += 1
         self.manager.acertos_total += 1
+        self.manager.total_acertoserros_necessarios_saida += 1
         self.manager.acertos_total_str = 'Acertos:  ' + str(self.manager.acertos_total)
         self.manager.latencia_acerto_str = "Latência: {0:.2f}".format(
             Clock.get_time() - self.manager.latencia) + ' segundos'
@@ -247,9 +249,15 @@ class TelaTesteTTDE(Screen):
         self.validate_troca_tela()
 
     def validate_troca_tela(self):
-        if self.acertos == 1:
-            logging.info('TelaTesteTTDE.incrementa_acerto: ACERTOU TUDO ({} acertos) !!!'.format(self.acertos))
-            Clock.schedule_once(self.troca_tela, 0.5)
+        if not self.isTT:
+            if self.acertos == 1:
+                logging.info('TelaTesteTTDE.incrementa_acerto: ACERTOU TUDO ({} acertos) !!!'.format(self.acertos))
+                Clock.schedule_once(self.troca_tela, 0.5)
+        else:
+            if self.acertos == 1 or self.erros == 1:
+                logging.info('TelaTesteTTAB.incrementa_acerto+erro: isTT ({}+{} acertos + erros = {}) !!!'.format(
+                    self.acertos, self.erros, self.acertos + self.erros))
+                Clock.schedule_once(self.troca_tela, 0.5)
 
     def troca_tela(self, delta):
         Clock.unschedule(self.troca_tela)

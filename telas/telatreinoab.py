@@ -35,6 +35,7 @@ class TelaTreinoAB(Screen):
     erros = 0
     telaatual = StringProperty()
     should_show_smile = True
+    isTT = False
 
     def __init__(self, **kw):
         super(TelaTreinoAB, self).__init__(**kw)
@@ -256,6 +257,7 @@ class TelaTreinoAB(Screen):
                                                                                          self.acertos + 1))
         self.acertos += 1
         self.manager.acertos_total += 1
+        self.manager.total_acertoserros_necessarios_saida += 1
         self.manager.acertos_total_str = 'Acertos:  ' + str(self.manager.acertos_total)
         self.manager.latencia_acerto_str = "Latencia acerto: {0:.2f}".format(
             Clock.get_time() - self.manager.latencia) + ' segundos'

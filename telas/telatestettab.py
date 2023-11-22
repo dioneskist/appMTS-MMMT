@@ -35,6 +35,7 @@ class TelaTesteTTAB(Screen):
     erros = 0
     telaatual = StringProperty()
     should_show_smile = False
+    isTT = True
 
     def __init__(self, **kw):
         super(TelaTesteTTAB, self).__init__(**kw)
@@ -62,30 +63,8 @@ class TelaTesteTTAB(Screen):
     def popula_imagens_source(self):
         logging.debug('popula_imagens_source: Iniciando carregamento da imagens para sourcePictures')
         self.ids._si1._imagem = 'figuras/' + self.ordem + '/' + self.get_figura_source(0) + '.jpg'
-        print(self.ids._si1._imagem)
-        print(self.get_figura_source(0))
         self.ids._si2._imagem = 'figuras/' + self.ordem + '/' + self.get_figura_source(1) + '.jpg'
-        print(self.ids._si2._imagem)
-        print(self.get_figura_source(1))
         self.ids._si3._imagem = 'figuras/' + self.ordem + '/' + self.get_figura_source(2) + '.jpg'
-        print(self.ids._si3._imagem)
-        print(self.get_figura_source(2))
-
-        # carrega filhos do world (target, source, smile)
-        # contador_figura = 0
-        # for child in self.children:
-        #     # print(id(c))
-        #     # print(c.wid)
-        #     if type(child) == SourcePicture:
-        #         # carrega filhos do source (imagem)
-        #         for image in child.children:
-        #             # print(sc)
-        #             # print(sc.wid)
-        #             figura = self.get_figura_source(contador_figura)
-        #             logging.debug('popula_imagens_source: Associada figura {} com wid=[{}]'.format(figura, image.wid))
-        #             imagem_name = 'figuras/' + self.ordem + '/' + figura + '.jpg'
-        #             image.__self__._imagem = imagem_name
-        #             contador_figura += 1
 
     # popular imagens para todos os targetPictures
     # a_1
@@ -94,25 +73,8 @@ class TelaTesteTTAB(Screen):
         logging.debug('popula_imagens_target: Iniciando carregamento da imagens para targetPictures')
         # carrega filhos do world (target, source, smile)
         self.ids._ti1._imagem = 'figuras/' + self.ordem + '/' + self.get_figura_target(0) + '.jpg'
-        print(self.ids._ti1._imagem)
-        print(self.get_figura_target(0))
         self.ids._ti2._imagem = 'figuras/' + self.ordem + '/' + self.get_figura_target(1) + '.jpg'
-        print(self.ids._ti2._imagem)
-        print(self.get_figura_target(1))
         self.ids._ti3._imagem = 'figuras/' + self.ordem + '/' + self.get_figura_target(2) + '.jpg'
-        print(self.ids._ti3._imagem)
-        print(self.get_figura_target(2))
-
-        # contador_figura = 0
-        # for child in self.children:
-        #     if type(child) == TargetPicture:
-        #         # carrega filhos do target (imagem)
-        #         for image in child.children:
-        #             figura = self.get_figura_target(contador_figura)
-        #             logging.debug('popula_imagens_target: Associada figura {} com wid=[{}]'.format(figura, image.wid))
-        #             imagem_name = 'figuras/' + self.ordem + '/' + figura + '.jpg'
-        #             image.__self__._imagem = imagem_name
-        #             contador_figura += 1
 
     def get_figura_target(self, posicao):
         figura = self.combinacoes[3 + posicao]
@@ -265,12 +227,14 @@ class TelaTesteTTAB(Screen):
             'TelaTesteTTAB.incrementa_erro: incrementando erros de {} para {}'.format(self.erros, self.erros + 1))
         self.erros += 1
         self.manager.acertos_total = 0
+        self.manager.total_acertoserros_necessarios_saida += 1
         self.manager.acertos_total_str = 'Acertos:  ' + str(self.manager.acertos_total)
         self.manager.erros_total += 1
         self.manager.erros_total_str = 'Erros:  ' + str(self.manager.erros_total)
         self.manager.latencia_erro_str = "Latencia erro: {0:.2f}".format(
             Clock.get_time() - self.manager.latencia) + 'segundos'
         self.manager.erros_consecutivos()
+        self.validate_troca_tela()
 
     def write_attempt(self, hit_error, id_widget_source, id_widget_target):
         logging.debug(
@@ -299,6 +263,7 @@ class TelaTesteTTAB(Screen):
                                                                                           self.acertos + 1))
         self.acertos += 1
         self.manager.acertos_total += 1
+        self.manager.total_acertoserros_necessarios_saida += 1
         self.manager.acertos_total_str = 'Acertos:  ' + str(self.manager.acertos_total)
         self.manager.latencia_acerto_str = "Latencia acerto: {0:.2f}".format(
             Clock.get_time() - self.manager.latencia) + ' segundos'
@@ -306,9 +271,14 @@ class TelaTesteTTAB(Screen):
         self.validate_troca_tela()
 
     def validate_troca_tela(self):
-        if self.acertos == 3:
-            logging.info('TelaTesteTTAB.incrementa_acerto: ACERTOU TUDO ({} acertos) !!!'.format(self.acertos))
-            Clock.schedule_once(self.troca_tela, 0.5)
+        if not self.isTT:
+            if self.acertos == 3:
+                logging.info('TelaTesteTTAB.incrementa_acerto: ACERTOU TUDO ({} acertos) !!!'.format(self.acertos))
+                Clock.schedule_once(self.troca_tela, 0.5)
+        else:
+            if self.acertos + self.erros == 3:
+                logging.info('TelaTesteTTAB.incrementa_acerto+erro: isTT ({}+{} acertos + erros = {}) !!!'.format(self.acertos, self.erros, self.acertos+self.erros))
+                Clock.schedule_once(self.troca_tela, 0.5)
 
     def troca_tela(self, delta):
         proxima_tela = 'TelaTreinoDE'

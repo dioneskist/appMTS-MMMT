@@ -128,7 +128,8 @@ class GerenciadorDeTelas(ScreenManager):
     acertos_total_str = StringProperty()
     erros_total = 0
     erros_total_str = StringProperty()
-    total_acertos_necessarios = 0
+    total_hits_necessarios_saida = 0
+    total_acertoserros_necessarios_saida = 0
 
     # ordem selecionada
     # pretreino ou ordem1 ou ordem2 ou ordemt
@@ -186,7 +187,7 @@ class GerenciadorDeTelas(ScreenManager):
             else:
                 self.tela_AB_current += 1
                 return str(self.tela_AB_current)
-        if next_expected in self.screen_name_DE:
+        elif next_expected in self.screen_name_DE:
             if self.tela_DE_respondidas == 0 and self.tela_DE_current == 0:  # first screen
                 return str(0)
             else:
@@ -204,7 +205,7 @@ class GerenciadorDeTelas(ScreenManager):
         treinoAB e treinoDE quando escolhido 'TR AB/DE' e treinoBC e treinoEF quando escolhido 'TR BC/EF' 4 - as
         telas treinoAB usam o primeiro par de letras 5 - as telas treinoDE usam o segundo par de letras
 
-        total_acertos_necessarios == ?, tempo_maximo == ?
+        total_acertoserros_necessarios_saida == ?, tempo_maximo == ?
         PT          - 12, 600
         TR AB       - 18, 1800
         TR BC       - 18, 1800
@@ -222,7 +223,7 @@ class GerenciadorDeTelas(ScreenManager):
             tela treino usa as letras da posica 3 e 4 (AB) 'TR AB/DE'
             """
 
-            self.total_acertos_necessarios = 6
+            self.total_hits_necessarios_saida = 6
             self.tempo_maximo = 600.0
 
             letter_x = str(self.letters[3]).lower()
@@ -238,8 +239,8 @@ class GerenciadorDeTelas(ScreenManager):
 
             self.total_telasAB_validas = len(self.all_combinacoes_XY)
             self.total_telasDE_validas = len(self.all_combinacoes_ZW)
-            self.screen_name_AB = ''
-            self.screen_name_DE = ''
+            self.screen_name_AB = 'TelaTreinoAB_'
+            self.screen_name_DE = 'TelaTreinoDE_'
 
             # cria primeira tela AB ou BC para comecar
             self.adiciona_tela(
@@ -260,7 +261,7 @@ class GerenciadorDeTelas(ScreenManager):
             tela treino usa as letras da posica 3 e 4 (AB) 'TR AB/DE'
             """
 
-            self.total_acertos_necessarios = 18
+            self.total_hits_necessarios_saida = 18
             self.tempo_maximo = 1800.0
 
             letter_x = str(self.letters[3]).lower()
@@ -292,7 +293,7 @@ class GerenciadorDeTelas(ScreenManager):
 
         # valida se o é misto
         if 'TR Misto' in self.letters:
-            self.total_acertos_necessarios = 24
+            self.total_hits_necessarios_saida = 24
             self.tempo_maximo = 600.0
             self.primeira_tela = 'TelaMisto_0'
             pass
@@ -312,7 +313,7 @@ class GerenciadorDeTelas(ScreenManager):
         #     self.current = 'TelaTreinoAB0'
         #     self.transition.direction = 'left'
         if 'TT' in self.letters:
-            self.total_acertos_necessarios = 12
+            self.total_hits_necessarios_saida = 12
             self.tempo_maximo = 600.0
 
             letter_x = str(self.letters[3]).lower()
@@ -406,6 +407,10 @@ class GerenciadorDeTelas(ScreenManager):
                                     ordem=self.ordem)
                 logging.debug('generate_next_tela Gerada tela {} {}'.format(tela.name, tela))
                 return tela
+        else:
+            tela = TelaFinal(name='tela_final')
+            logging.debug('generate_next_tela Gerada tela {} {}'.format(tela.name, tela))
+            return tela
 
     def troca_tela(self):
 
@@ -430,7 +435,7 @@ class GerenciadorDeTelas(ScreenManager):
         logging.debug('Main.troca_tela: tempo decorrido entre acerto anterior e agora {}.'.format(tempo_decorrido))
 
         # valida final dos treinos e testes
-        if self.acertos_total == self.total_acertos_necessarios or tempo_decorrido >= self.tempo_maximo:
+        if self.total_acertoserros_necessarios_saida == self.total_hits_necessarios_saida or tempo_decorrido >= self.tempo_maximo:
             tela_final = ''
             logging.debug('Main.troca_tela: total de acertos {}.'.format(self.acertos_total))
             logging.debug('Main.troca_tela: tela final sera chamada {}.'.format(tela_final))
