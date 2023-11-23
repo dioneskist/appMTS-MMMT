@@ -313,7 +313,7 @@ class GerenciadorDeTelas(ScreenManager):
         #     self.current = 'TelaTreinoAB0'
         #     self.transition.direction = 'left'
         if 'TT' in self.letters:
-            self.total_hits_necessarios_saida = 12
+            self.total_hits_necessarios_saida = 18
             self.tempo_maximo = 600.0
 
             letter_x = str(self.letters[3]).lower()
