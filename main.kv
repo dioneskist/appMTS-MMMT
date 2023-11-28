@@ -149,23 +149,34 @@
 
 <TelaNomeParticipante>:
     MyBoxLayout:
-        Label:
-            text: 'Nome do avaliado'
-            font_size: 25
-        TextInput:
-            id:  _input
-            text: ''
-            font_size: 45
-        MyButton:
-            text: 'Próximo'
-            on_release:
-                root.manager.current = 'instrucoes'
-                root.manager.transition.direction = 'left'
-        MyButton:
-            text: 'Voltar'
-            on_release:
-                root.manager.current = 'telatt'
-                root.manager.transition.direction = 'right'
+        MyBoxLayout:
+            Label:
+                text: 'Participante'
+                font_size: 45
+                color: 0,0,0,1
+                size_hint_y: None
+            TextInput:
+                id:  _input
+                text: ''
+                font_size: 45
+                size_hint_y: None
+            Label:
+                text: ''
+                font_size: 45
+                size_hint_y: None
+        MyBoxLayout:
+            MyButton:
+                text: 'Próximo'
+                size_hint_y: None
+                on_release:
+                    root.manager.current = 'instrucoes'
+                    root.manager.transition.direction = 'left'
+            MyButton:
+                text: 'Voltar'
+                size_hint_y: None
+                on_release:
+                    root.manager.current = 'telatt'
+                    root.manager.transition.direction = 'right'
 
 <TelaTreinoAB>:
     targetPictures: [_t1, _t2, _t3]
@@ -623,10 +634,12 @@
             source: 'figuras/joinha.jpg'
         MyButton:
             text: 'Voltar ao Início'
+            size_hint_y: None
             on_release:
                 root.manager.reiniciar_app()
         MyButton:
             text: 'Sair'
+            size_hint_y: None
             on_release: app.stop()
 
 <BlankTela>:

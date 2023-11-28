@@ -183,20 +183,19 @@ class GerenciadorDeTelas(ScreenManager):
 
         if next_expected in self.screen_name_AB:
             if self.tela_AB_current >= self.total_telasAB_validas - 1:  # (0 a 35) >= 35
-                return str(0)
+                self.tela_AB_current = 0
             else:
                 self.tela_AB_current += 1
-                return str(self.tela_AB_current)
+            return str(self.tela_AB_current)
         elif next_expected in self.screen_name_DE:
             if self.tela_DE_respondidas == 0 and self.tela_DE_current == 0:  # first screen
                 return str(0)
             else:
                 if self.tela_DE_current >= self.total_telasDE_validas - 1:  # (0 a 17) >= 17
                     self.tela_DE_current = 0
-                    return str(0)
                 else:
                     self.tela_DE_current += 1
-                    return str(self.tela_DE_current)
+                return str(self.tela_DE_current)
 
     def comecar(self):
         """
@@ -223,7 +222,7 @@ class GerenciadorDeTelas(ScreenManager):
             tela treino usa as letras da posica 3 e 4 (AB) 'TR AB/DE'
             """
 
-            self.total_hits_necessarios_saida = 6
+            self.total_hits_necessarios_saida = 12
             self.tempo_maximo = 600.0
 
             letter_x = str(self.letters[3]).lower()
@@ -437,7 +436,7 @@ class GerenciadorDeTelas(ScreenManager):
         # valida final dos treinos e testes
         if self.total_acertoserros_necessarios_saida == self.total_hits_necessarios_saida or tempo_decorrido >= self.tempo_maximo:
             tela_final = ''
-            logging.debug('Main.troca_tela: total de acertos {}.'.format(self.acertos_total))
+            logging.debug('Main.troca_tela: total de acertos/erros {} letters {}.'.format(self.total_acertoserros_necessarios_saida, self.letters))
             logging.debug('Main.troca_tela: tela final sera chamada {}.'.format(tela_final))
             self.finalizar_result_file()
             self.acertos_total = 0
@@ -447,7 +446,11 @@ class GerenciadorDeTelas(ScreenManager):
             self.add_widget(TelaFinal(name=tela_final))
             self.current = tela_final
         else:
-            logging.debug('Main.troca_tela: total de acertos até o momento é {}.'.format(self.acertos_total))
+            if 'TT' in self.letters:
+                logging.debug('Main.troca_tela: total de acertos/erros até o momento é {} letters {}.'.format(self.total_acertoserros_necessarios_saida, self.letters))
+            else:
+
+                logging.debug('Main.troca_tela: total de acertos até o momento é {}.'.format(self.total_acertoserros_necessarios_saida, self.letters))
             tela_atual = self.current
             self.ultima = self.current
 

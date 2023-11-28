@@ -223,6 +223,7 @@ class TelaTreinoAB(Screen):
             'TelaTreinoAB.incrementa_erro: incrementando erros de {} para {}'.format(self.erros, self.erros + 1))
         self.erros += 1
         self.manager.acertos_total = 0
+        self.manager.total_acertoserros_necessarios_saida = 0
         self.manager.acertos_total_str = 'Acertos:  ' + str(self.manager.acertos_total)
         self.manager.erros_total += 1
         self.manager.erros_total_str = 'Erros:  ' + str(self.manager.erros_total)
