@@ -32,15 +32,13 @@ from telas.telaVisualizar import TelaVisualizar
 import itertools
 import hashlib
 
-from utils import combinations
+from utils.screen_combinations import preparar_combinacoes
 
 width = 1200
 height = 1920
 
 Window.size = (width, height)
 Window.clearcolor = (1, 1, 1, 1)
-
-
 
 
 class GerenciadorDeTelas(ScreenManager):
@@ -178,8 +176,7 @@ class GerenciadorDeTelas(ScreenManager):
             list_y = itertools.permutations([letter_y + '_1', letter_y + '_2', letter_y + '_3'], 3)
             list_z = itertools.permutations([letter_z + '_1', letter_z + '_2', letter_z + '_3'], 1)
             list_w = itertools.permutations([letter_w + '_1', letter_w + '_2', letter_w + '_3'], 3)
-            self.all_combinacoes_XY = combinations.gerar_todas_combinacoes(list_y, list_x, False)
-            self.all_combinacoes_ZW = combinations.gerar_todas_combinacoes(list_z, list_w, combinacoes_teste_DE=True)
+            self.all_combinacoes_XY, self.all_combinacoes_ZW = preparar_combinacoes(self.letters)
 
             self.total_telasAB_validas = len(self.all_combinacoes_XY)
             self.total_telasDE_validas = len(self.all_combinacoes_ZW)
@@ -216,8 +213,7 @@ class GerenciadorDeTelas(ScreenManager):
             list_y = itertools.permutations([letter_y + '_1', letter_y + '_2', letter_y + '_3'], 3)
             list_z = itertools.permutations([letter_z + '_1', letter_z + '_2', letter_z + '_3'], 1)
             list_w = itertools.permutations([letter_w + '_1', letter_w + '_2', letter_w + '_3'], 3)
-            self.all_combinacoes_XY = combinations.gerar_todas_combinacoes(list_y, list_x, False)
-            self.all_combinacoes_ZW = combinations.gerar_todas_combinacoes(list_z, list_w, combinacoes_teste_DE=True)
+            self.all_combinacoes_XY, self.all_combinacoes_ZW = preparar_combinacoes(self.letters)
 
             self.total_telasAB_validas = len(self.all_combinacoes_XY)
             self.total_telasDE_validas = len(self.all_combinacoes_ZW)
@@ -268,8 +264,7 @@ class GerenciadorDeTelas(ScreenManager):
             list_y = itertools.permutations([letter_y + '_1', letter_y + '_2', letter_y + '_3'], 3)
             list_z = itertools.permutations([letter_z + '_1', letter_z + '_2', letter_z + '_3'], 1)
             list_w = itertools.permutations([letter_w + '_1', letter_w + '_2', letter_w + '_3'], 3)
-            self.all_combinacoes_XY = gerar_todas_combinacoes(list_y, list_x, False)
-            self.all_combinacoes_ZW = gerar_todas_combinacoes(list_z, list_w, combinacoes_teste_DE=True)
+            self.all_combinacoes_XY, self.all_combinacoes_ZW = preparar_combinacoes(self.letters)
 
             self.total_telasAB_validas = len(self.all_combinacoes_XY)
             self.total_telasDE_validas = len(self.all_combinacoes_ZW)
@@ -381,7 +376,8 @@ class GerenciadorDeTelas(ScreenManager):
         # valida final dos treinos e testes
         if self.total_acertoserros_necessarios_saida == self.total_hits_necessarios_saida or tempo_decorrido >= self.tempo_maximo:
             tela_final = ''
-            logging.debug('Main.troca_tela: total de acertos/erros {} letters {}.'.format(self.total_acertoserros_necessarios_saida, self.letters))
+            logging.debug('Main.troca_tela: total de acertos/erros {} letters {}.'.format(
+                self.total_acertoserros_necessarios_saida, self.letters))
             logging.debug('Main.troca_tela: tela final sera chamada {}.'.format(tela_final))
             self.finalizar_result_file()
             self.acertos_total = 0
@@ -392,10 +388,12 @@ class GerenciadorDeTelas(ScreenManager):
             self.current = tela_final
         else:
             if 'TT' in self.letters:
-                logging.debug('Main.troca_tela: total de acertos/erros até o momento é {} letters {}.'.format(self.total_acertoserros_necessarios_saida, self.letters))
+                logging.debug('Main.troca_tela: total de acertos/erros até o momento é {} letters {}.'.format(
+                    self.total_acertoserros_necessarios_saida, self.letters))
             else:
 
-                logging.debug('Main.troca_tela: total de acertos até o momento é {}.'.format(self.total_acertoserros_necessarios_saida, self.letters))
+                logging.debug('Main.troca_tela: total de acertos até o momento é {}.'.format(
+                    self.total_acertoserros_necessarios_saida, self.letters))
             tela_atual = self.current
             self.ultima = self.current
 

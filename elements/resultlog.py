@@ -1,3 +1,4 @@
+import csv
 import time
 from datetime import datetime
 from elements.attempt import Attempt
@@ -44,7 +45,7 @@ class ResultLog:
         print("Generated filename: {}".format(self.filename))
 
     def create_result_file(self):
-        with open(self.filename, 'w') as f:
+        with open(self.filename, 'w', encoding='utf-8') as f:
             f.write('Participante: ' + self.participant + '\n')
             f.write('Data: ' + self.date.strftime("%D") + '\n')
             f.write('Hora de Início: ' + self.start_time.strftime("%Y%M%d-%H%M%S") + '\n')
@@ -52,7 +53,7 @@ class ResultLog:
             f.write('Treino/Teste: ' + self.test_type + '\n')
 
     def write_result_file(self):
-        with open(self.filename, 'a') as f:
+        with open(self.filename, 'a',encoding='utf-8') as f:
             f.write('Latência Total: ' + str(self.latency_total) + '\n')
             f.write('Latência Média: ' + str(self.latency_avg) + '\n')
             f.write('Total de acertos: ' + str(self.hits) + '\n')
@@ -61,17 +62,17 @@ class ResultLog:
             f.write('Total de Pareamentos até o critério: ' + str(self.pareamentos_ate_acerto) + '\n')
 
     def write_attempt(self, attempt):
-        with open(self.filename, 'a') as f:
+        with open(self.filename, 'a',encoding='utf-8') as f:
             f.write(generate_csv(attempt) + '\n')
 
     def write_end_time(self):
         lines = ""
-        with open(self.filename, 'r') as f:
+        with open(self.filename, 'r', encoding='utf-8') as f:
             for line in f.readlines():
                 if "END_TIME" in line:
                     line = 'Hora de Conclusão: ' + self.end_time.strftime("%Y%M%d-%H%M%S") + '\n'
                 lines += line
-        with open(self.filename, 'w') as f:
+        with open(self.filename, 'w', encoding='utf-8') as f:
             f.write(lines)
 
     def write_excel_file(self):
@@ -137,13 +138,13 @@ class ResultLog:
         workbook.close()
 
 
-def generate_csv(attempt):
+def attempt2csv(attempt):
     ret = ""
     ret += attempt.comparation + ","
     ret += attempt.key_comparation + ","
     ret += attempt.model + ","
     ret += attempt.key_model + ","
-    ret += attempt.hit_or_error + ","
+    ret += attempt.hit_or_error.value + ","
     ret += str(attempt.consecutive_hits) + ","
     ret += str(attempt.latency_from_screen)
     return ret

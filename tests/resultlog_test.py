@@ -1,9 +1,13 @@
+import csv
 import time
 import unittest
+import builtins
 from datetime import datetime
+from unittest.mock import mock_open, patch
 
 from elements.attempt import Attempt
 from elements.enum.figura import Figura
+from elements.enum.hiterror import HitError
 from elements.resultlog import ResultLog
 
 
@@ -13,6 +17,9 @@ class ResultLogTest(unittest.TestCase):
     end_time = None
     result_log = ResultLog()
 
+    attemptA1Equals: Attempt
+    attemptA2NotEquals: Attempt
+
     def setUp(self):
         self.participant = 'teste 1'
         self.date = datetime.now()
@@ -20,6 +27,13 @@ class ResultLogTest(unittest.TestCase):
         time.sleep(0.5)
         self.end_time = datetime.now()
         self.test_type = 'TR AB/DE'
+
+        self.attemptA1Equals = Attempt(comparation=Figura.A1.value, key_comparation=Figura.A1.value[1],
+                                       model=Figura.A1.value, key_model=Figura.A1.value[1], consecutive_hits=0,
+                                       latency_from_screen=datetime.now(), hit_or_error=HitError.HIT)
+        self.attemptA2NotEquals = Attempt(comparation=Figura.A1.value, key_comparation=Figura.A1.value[1],
+                                          model=Figura.A2.value, key_model=Figura.A2.value[1], consecutive_hits=0,
+                                          latency_from_screen=datetime.now(), hit_or_error=HitError.ERROR)
 
     def test_create_valid_result_log_filename_with_participant(self):
         result_log = self.result_log
@@ -58,24 +72,14 @@ class ResultLogTest(unittest.TestCase):
     def test_2_attempts_equals(self):
         result_log = self.result_log
 
-        attempt1 = Attempt()
-        attempt1.comparation = Figura.A1.name
-        attempt1.key = Figura.A1.value
-        attempt1.model = Figura.A1.name
-        attempt1.key_model = Figura.A1.value
-        self.assertEqual(attempt1.comparation, attempt1.model)
-        self.assertEqual(attempt1.key, attempt1.key_model)
+        self.assertEqual(self.attemptA1Equals.comparation, self.attemptA1Equals.model)
+        self.assertEqual(self.attemptA1Equals.key_comparation, self.attemptA1Equals.key_model)
 
     def test_2_attempts_not_equals(self):
         result_log = self.result_log
 
-        attempt1 = Attempt()
-        attempt1.comparation = Figura.A1.name
-        attempt1.key = Figura.A1.value
-        attempt1.model = Figura.A2.name
-        attempt1.key_model = Figura.A2.value
-        self.assertNotEquals(attempt1.comparation, attempt1.model)
-        self.assertNotEquals(attempt1.key, attempt1.key_model)
+        self.assertNotEquals(self.attemptA2NotEquals.comparation, self.attemptA2NotEquals.model)
+        self.assertNotEquals(self.attemptA2NotEquals.key_comparation, self.attemptA2NotEquals.key_model)
 
     def test_write_end_time(self):
         result_log = self.result_log
@@ -83,3 +87,30 @@ class ResultLogTest(unittest.TestCase):
         result_log.create_result_file()
         result_log.end_time = datetime.now()
         result_log.write_end_time()
+
+    def test_generate_csv_from_attempt(self):
+
+        attempt: Attempt
+
+        l =csv.reader(['a,2'])
+        for li in l:
+            print(li)
+        # print(csv.writer(self.attemptA1Equals))
+        # attempt = self.attemptA1Equals
+        # csv_generated = generate_csv(self.attemptA1Equals)
+        # csv = ""
+        # csv += attempt.comparation + ","
+        # csv += attempt.key_comparation + ","
+        # csv += attempt.model + ","
+        # csv += attempt.key_model + ","
+        # csv += attempt.hit_or_error.value + ","
+        # csv += str(attempt.consecutive_hits) + ","
+        # csv += str(attempt.latency_from_screen)
+        # self.assertEqual(csv_generated, csv)
+
+    def test_open_file_mocked(self):
+        with patch('builtins.open', mock_open(read_data='test')) as m:
+            with open('foo') as f:
+                content = f.read()
+        m.assert_called_once_with('foo')
+        assert content == 'test'
