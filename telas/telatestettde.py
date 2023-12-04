@@ -183,7 +183,7 @@ class TelaTesteTTDE(Screen):
                 apagar_widget_id = self.ids._smile1
                 self.desaparecer_smile(apagar_widget_id)
         else:
-            logging.debug('show_smile: smile don\'t show for Test TT'.format())
+            logging.debug('show_smile: smile doesn\'t show for Test TT'.format())
             self.incrementa_acerto()
 
     def desaparecer_smile(self, apagar_widget_id):

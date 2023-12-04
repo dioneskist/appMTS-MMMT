@@ -16,7 +16,6 @@ from kivy.uix.label import Label
 from kivy.uix.screenmanager import ScreenManager, Screen
 
 from elements.resultlog import ResultLog
-from elements.utils import gerar_todas_combinacoes
 from telas.blanktela import BlankTela
 from telas.instrucoes import TelaInstrucoes
 from telas.menu import Menu
@@ -51,6 +50,27 @@ class GerenciadorDeTelas(ScreenManager):
     tela_DE_current = 0
     all_combinacoes_XY = None
     all_combinacoes_ZW = None
+
+    # SOMENTE MISTO
+    isMisto = False
+    tela_misto_AB_current = 0
+    tela_misto_DE_current = 0
+
+    """
+    TREINO MISTO EH O USO DE DOIS TREINOS SIMULTANEAMENTE, TR AB/DE e TR BC/EF
+    O TESTE EM EXECUCAO NA VEZ IRA SETAR O OUTRO TESTE COMO PROXIMO PARA QUE POSSA SER EXECUTADO
+    EM ORDEM CORRETA:
+    Ex.
+    teste em execucao -> TR AB/DE -> entao o valor da variavel esta em current_treino_misto=BC/EF
+    teste em execucao -> TR BC/EF -> entao o valor da variavel esta em current_treino_misto=AB/DE
+    """
+    current_treino_misto = ''
+
+    # TELAS SOMENTE PARA MISTO
+    all_combinacoes_XY_mistoAB = None
+    all_combinacoes_XY_mistoBC = None
+    all_combinacoes_ZW_mistoDE = None
+    all_combinacoes_ZW_mistoEF = None
 
     # flag para contar a quantidade de telas treinoDE respondidas após a tela treino
     tela_DE_respondidas = 0
@@ -108,6 +128,12 @@ class GerenciadorDeTelas(ScreenManager):
     total_telasAB_validas = 0
     total_telasDE_validas = 0
 
+    # SOMENTE PARA MISTO
+    total_telas_mistoAB_validas = 0
+    total_telas_mistoBC_validas = 0
+    total_telas_mistoDE_validas = 0
+    total_telas_mistoEF_validas = 0
+
     # result log and repport
     result_log = None
     participant_name = None
@@ -122,23 +148,47 @@ class GerenciadorDeTelas(ScreenManager):
     def erros_consecutivos(self):
         self.consecutive_hists = 0
 
-    def get_next_tela(self, next_expected):
+    def get_next_tela(self, next_expected, is_misto):
 
         if next_expected in self.screen_name_AB:
-            if self.tela_AB_current >= self.total_telasAB_validas - 1:  # (0 a 35) >= 35
-                self.tela_AB_current = 0
-            else:
-                self.tela_AB_current += 1
-            return str(self.tela_AB_current)
-        elif next_expected in self.screen_name_DE:
-            if self.tela_DE_respondidas == 0 and self.tela_DE_current == 0:  # first screen
-                return str(0)
-            else:
-                if self.tela_DE_current >= self.total_telasDE_validas - 1:  # (0 a 17) >= 17
-                    self.tela_DE_current = 0
+            if is_misto:
+                if self.current_treino_misto == 'AB':
+                    if self.tela_misto_AB_current >= self.total_telas_mistoAB_validas - 1:  # (0 a 35) >= 35
+                        self.tela_misto_AB_current = 0
+                    else:
+                        self.tela_misto_AB_current += 1
+                    return str(self.tela_misto_AB_current)
                 else:
-                    self.tela_DE_current += 1
-                return str(self.tela_DE_current)
+                    if self.tela_misto_DE_current >= self.total_telas_mistoDE_validas - 1:  # (0 a 35) >= 35
+                        self.tela_misto_DE_current = 0
+                    else:
+                        self.tela_misto_DE_current += 1
+                    return str(self.tela_misto_DE_current)
+            else:
+                if self.tela_AB_current >= self.total_telasAB_validas - 1:  # (0 a 35) >= 35
+                    self.tela_AB_current = 0
+                else:
+                    self.tela_AB_current += 1
+                return str(self.tela_AB_current)
+        elif next_expected in self.screen_name_DE:
+            if is_misto:
+                if self.tela_DE_respondidas == 0 and self.tela_misto_DE_current == 0:  # first screen
+                    return str(0)
+                else:
+                    if self.tela_misto_DE_current >= self.total_telas_mistoDE_validas - 1:  # (0 a 17) >= 17
+                        self.tela_misto_DE_current = 0
+                    else:
+                        self.tela_misto_DE_current += 1
+                    return str(self.tela_misto_DE_current)
+            else:
+                if self.tela_DE_respondidas == 0 and self.tela_DE_current == 0:  # first screen
+                    return str(0)
+                else:
+                    if self.tela_DE_current >= self.total_telasDE_validas - 1:  # (0 a 17) >= 17
+                        self.tela_DE_current = 0
+                    else:
+                        self.tela_DE_current += 1
+                    return str(self.tela_DE_current)
 
     def comecar(self):
         """
@@ -168,14 +218,6 @@ class GerenciadorDeTelas(ScreenManager):
             self.total_hits_necessarios_saida = 12
             self.tempo_maximo = 600.0
 
-            letter_x = str(self.letters[3]).lower()
-            letter_y = str(self.letters[4]).lower()
-            letter_z = str(self.letters[6]).lower()
-            letter_w = str(self.letters[7]).lower()
-            list_x = itertools.permutations([letter_x + '_1', letter_x + '_2', letter_x + '_3'], 3)
-            list_y = itertools.permutations([letter_y + '_1', letter_y + '_2', letter_y + '_3'], 3)
-            list_z = itertools.permutations([letter_z + '_1', letter_z + '_2', letter_z + '_3'], 1)
-            list_w = itertools.permutations([letter_w + '_1', letter_w + '_2', letter_w + '_3'], 3)
             self.all_combinacoes_XY, self.all_combinacoes_ZW = preparar_combinacoes(self.letters)
 
             self.total_telasAB_validas = len(self.all_combinacoes_XY)
@@ -205,14 +247,6 @@ class GerenciadorDeTelas(ScreenManager):
             self.total_hits_necessarios_saida = 18
             self.tempo_maximo = 1800.0
 
-            letter_x = str(self.letters[3]).lower()
-            letter_y = str(self.letters[4]).lower()
-            letter_z = str(self.letters[6]).lower()
-            letter_w = str(self.letters[7]).lower()
-            list_x = itertools.permutations([letter_x + '_1', letter_x + '_2', letter_x + '_3'], 3)
-            list_y = itertools.permutations([letter_y + '_1', letter_y + '_2', letter_y + '_3'], 3)
-            list_z = itertools.permutations([letter_z + '_1', letter_z + '_2', letter_z + '_3'], 1)
-            list_w = itertools.permutations([letter_w + '_1', letter_w + '_2', letter_w + '_3'], 3)
             self.all_combinacoes_XY, self.all_combinacoes_ZW = preparar_combinacoes(self.letters)
 
             self.total_telasAB_validas = len(self.all_combinacoes_XY)
@@ -233,37 +267,45 @@ class GerenciadorDeTelas(ScreenManager):
 
         # valida se o é misto
         if 'TR Misto' in self.letters:
-            self.total_hits_necessarios_saida = 24
-            self.tempo_maximo = 600.0
-            self.primeira_tela = 'TelaMisto_0'
-            pass
-        #     """
-        #     for para criar as telas de treino com todas as combinacoes possibeis entre x1,x2,x3 e y1,y2,y3
-        #     tela treino usa as letras da posica 3 e 4 'TR AB/DE'
-        #     """
-        #     letter_x = str(self.letters[3]).lower()
-        #     letter_y = str(self.letters[4]).lower()
-        #     list_x = itertools.permutations([letter_y + '_1', letter_y + '_2', letter_y + '_3'], 3)
-        #     list_y = itertools.permutations([letter_x + '_1', letter_x + '_2', letter_x + '_3'], 3)
-        #     all_combinacoes_XY = gerar_todas_combinacoes(list_x, list_y)
-        #     index = 0
-        #     for combinacao_xy in all_combinacoes_XY:
-        #         self.adiciona_tela(TelaTreinoAB(name='telateste_' + str(index), combinacoes=combinacao_xy, ordem=self.ordem))
-        #         index += 1
-        #     self.current = 'TelaTreinoAB0'
-        #     self.transition.direction = 'left'
+            """
+            for para criar as telas de treino com todas as combinacoes possiveis entre (x1,x2,x3 e y1,y2,y3)
+            e (y1,y1,y3 e w1)
+            as telas usam as combinacoes dos testes TR AB/DE e TR BC/EF
+            """
+
+            self.total_hits_necessarios_saida = 12
+            self.tempo_maximo = 1800.0
+
+            # configure combinacoes for TR MISTO AB/DF
+            self.all_combinacoes_XY_mistoAB, self.all_combinacoes_ZW_mistoDE = preparar_combinacoes('TR AB/DE')
+            self.all_combinacoes_XY_mistoBC, self.all_combinacoes_ZW_mistoEF = preparar_combinacoes('TR BC/EF')
+
+            self.total_telas_mistoAB_validas = len(self.all_combinacoes_XY_mistoAB)
+            self.total_telas_mistoBC_validas = len(self.all_combinacoes_XY_mistoBC)
+            self.total_telas_mistoDE_validas = len(self.all_combinacoes_ZW_mistoDE)
+            self.total_telas_mistoEF_validas = len(self.all_combinacoes_ZW_mistoEF)
+            self.screen_name_AB = 'TelaTreinoAB_'
+            self.screen_name_DE = 'TelaTreinoDE_'
+            self.isMisto = True
+            self.current_treino_misto = 'AB'
+
+            # configure combinacoes for TR MISTO AB/DF
+
+            # cria primeira tela AB ou BC para comecar
+            self.adiciona_tela(
+                TelaTreinoAB(name='TelaTreinoAB_' + str(self.tela_misto_AB_current),
+                             combinacoes=self.all_combinacoes_XY_mistoAB[self.tela_misto_AB_current],
+                             ordem=self.ordem))
+
+            logging.debug('comecar: configurado tela_mistoAB_{} com combinacao={}'.format(self.tela_misto_AB_current,
+                                                                                          self.all_combinacoes_XY_mistoAB[
+                                                                                              self.tela_misto_AB_current]))
+            self.primeira_tela = 'TelaTreinoAB_' + str(self.tela_misto_AB_current)
+
         if 'TT' in self.letters:
             self.total_hits_necessarios_saida = 18
             self.tempo_maximo = 600.0
 
-            letter_x = str(self.letters[3]).lower()
-            letter_y = str(self.letters[4]).lower()
-            letter_z = str(self.letters[6]).lower()
-            letter_w = str(self.letters[7]).lower()
-            list_x = itertools.permutations([letter_x + '_1', letter_x + '_2', letter_x + '_3'], 3)
-            list_y = itertools.permutations([letter_y + '_1', letter_y + '_2', letter_y + '_3'], 3)
-            list_z = itertools.permutations([letter_z + '_1', letter_z + '_2', letter_z + '_3'], 1)
-            list_w = itertools.permutations([letter_w + '_1', letter_w + '_2', letter_w + '_3'], 3)
             self.all_combinacoes_XY, self.all_combinacoes_ZW = preparar_combinacoes(self.letters)
 
             self.total_telasAB_validas = len(self.all_combinacoes_XY)
@@ -334,18 +376,45 @@ class GerenciadorDeTelas(ScreenManager):
                                      ordem=self.ordem)
                 logging.debug('generate_next_tela Gerada tela {} {}'.format(tela.name, tela))
                 return tela
-
         elif 'Treino' in proxima:
-            if 'AB' in proxima:
-                tela = TelaTreinoAB(name=proxima, combinacoes=self.all_combinacoes_XY[self.tela_AB_current],
-                                    ordem=self.ordem)
-                logging.debug('generate_next_tela Gerada tela {} {}'.format(tela.name, tela))
-                return tela
+            if self.isMisto:
+                if self.current_treino_misto is 'BC':
+                    if 'AB' in proxima:
+                        tela = TelaTreinoAB(name=proxima,
+                                            combinacoes=self.all_combinacoes_XY_mistoBC[self.tela_misto_AB_current],
+                                            ordem=self.ordem)
+                        logging.debug('generate_next_tela Gerada tela {} {}'.format(tela.name, tela))
+                        return tela
+                    else:
+                        tela = TelaTreinoDE(name=proxima,
+                                            combinacoes=self.all_combinacoes_ZW_mistoEF[self.tela_misto_DE_current],
+                                            ordem=self.ordem)
+                        logging.debug('generate_next_tela Gerada tela {} {}'.format(tela.name, tela))
+                        return tela
+                else:
+                    if 'AB' in proxima:
+                        tela = TelaTreinoAB(name=proxima,
+                                            combinacoes=self.all_combinacoes_XY_mistoAB[self.tela_misto_AB_current],
+                                            ordem=self.ordem)
+                        logging.debug('generate_next_tela Gerada tela {} {}'.format(tela.name, tela))
+                        return tela
+                    else:
+                        tela = TelaTreinoDE(name=proxima,
+                                            combinacoes=self.all_combinacoes_ZW_mistoDE[self.tela_misto_DE_current],
+                                            ordem=self.ordem)
+                        logging.debug('generate_next_tela Gerada tela {} {}'.format(tela.name, tela))
+                        return tela
             else:
-                tela = TelaTreinoDE(name=proxima, combinacoes=self.all_combinacoes_ZW[self.tela_DE_current],
-                                    ordem=self.ordem)
-                logging.debug('generate_next_tela Gerada tela {} {}'.format(tela.name, tela))
-                return tela
+                if 'AB' in proxima:
+                    tela = TelaTreinoAB(name=proxima, combinacoes=self.all_combinacoes_XY[self.tela_AB_current],
+                                        ordem=self.ordem)
+                    logging.debug('generate_next_tela Gerada tela {} {}'.format(tela.name, tela))
+                    return tela
+                else:
+                    tela = TelaTreinoDE(name=proxima, combinacoes=self.all_combinacoes_ZW[self.tela_DE_current],
+                                        ordem=self.ordem)
+                    logging.debug('generate_next_tela Gerada tela {} {}'.format(tela.name, tela))
+                    return tela
         else:
             tela = TelaFinal(name='tela_final')
             logging.debug('generate_next_tela Gerada tela {} {}'.format(tela.name, tela))
@@ -399,7 +468,7 @@ class GerenciadorDeTelas(ScreenManager):
 
             if self.tela_AB_finished:
                 self.tela_AB_finished = False
-                proxima = self.screen_name_DE + self.get_next_tela(self.screen_name_DE)
+                proxima = self.screen_name_DE + self.get_next_tela(self.screen_name_DE, self.isMisto)
                 print(proxima)
                 logging.debug('Main.troca_tela: trocando da tela {} para {}'.format(tela_atual, proxima))
                 self.adiciona_tela(self.generate_next_tela(proxima))
@@ -412,7 +481,13 @@ class GerenciadorDeTelas(ScreenManager):
                 self.tela_DE_finished = False
                 if self.tela_DE_respondidas == 3:
                     self.tela_DE_respondidas = 0
-                    proxima = self.screen_name_AB + self.get_next_tela(self.screen_name_AB)
+                    if self.isMisto:
+                        if self.current_treino_misto is 'AB':
+                            self.current_treino_misto = 'BC'
+                        else:
+                            self.current_treino_misto = 'AB'
+
+                    proxima = self.screen_name_AB + self.get_next_tela(self.screen_name_AB, self.isMisto)
                     self.adiciona_tela(self.generate_next_tela(proxima))
 
                     logging.debug('Main.troca_tela: trocando da tela {} para {}'.format(tela_atual, proxima))
@@ -421,7 +496,7 @@ class GerenciadorDeTelas(ScreenManager):
                     # add blanktela and add schedule
                     self.show_blanktela(0.5)
                 else:
-                    proxima = self.screen_name_DE + self.get_next_tela(self.screen_name_DE)
+                    proxima = self.screen_name_DE + self.get_next_tela(self.screen_name_DE, self.isMisto)
                     self.adiciona_tela(self.generate_next_tela(proxima))
                     logging.debug('Main.troca_tela: trocando da tela {} para {}'.format(tela_atual, proxima))
                     self.proxima = proxima

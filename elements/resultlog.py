@@ -53,7 +53,7 @@ class ResultLog:
             f.write('Treino/Teste: ' + self.test_type + '\n')
 
     def write_result_file(self):
-        with open(self.filename, 'a',encoding='utf-8') as f:
+        with open(self.filename, 'a', encoding='utf-8') as f:
             f.write('Latência Total: ' + str(self.latency_total) + '\n')
             f.write('Latência Média: ' + str(self.latency_avg) + '\n')
             f.write('Total de acertos: ' + str(self.hits) + '\n')
@@ -62,7 +62,7 @@ class ResultLog:
             f.write('Total de Pareamentos até o critério: ' + str(self.pareamentos_ate_acerto) + '\n')
 
     def write_attempt(self, attempt):
-        with open(self.filename, 'a',encoding='utf-8') as f:
+        with open(self.filename, 'a', encoding='utf-8') as f:
             f.write(generate_csv(attempt) + '\n')
 
     def write_end_time(self):
@@ -144,7 +144,19 @@ def attempt2csv(attempt):
     ret += attempt.key_comparation + ","
     ret += attempt.model + ","
     ret += attempt.key_model + ","
-    ret += attempt.hit_or_error.value + ","
+    ret += attempt.hit_or_error + ","
+    ret += str(attempt.consecutive_hits) + ","
+    ret += str(attempt.latency_from_screen)
+    return ret
+
+
+def generate_csv(attempt):
+    ret = ""
+    ret += attempt.comparation + ","
+    ret += attempt.key_comparation + ","
+    ret += attempt.model + ","
+    ret += attempt.key_model + ","
+    ret += attempt.hit_or_error + ","
     ret += str(attempt.consecutive_hits) + ","
     ret += str(attempt.latency_from_screen)
     return ret

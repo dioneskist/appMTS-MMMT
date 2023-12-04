@@ -195,7 +195,6 @@ class TelaTreinoDE(Screen):
         self.remove_widget(apagar_widget_id)
         self.incrementa_acerto()
 
-
     def incrementa_erro(self):
         logging.debug('Telateste.incrementa_erro: incrementando erros de {} para {}'.format(self.erros, self.erros + 1))
         self.erros += 1

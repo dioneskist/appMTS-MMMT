@@ -56,22 +56,20 @@ class SourcePicture(Label):
                 self.reset_colors()
                 # coloca source na origem
                 # self.parent.colocar_source_na_origem(self.clicked_wid)
+                self.parent.manager.acertos_consecutivos()
                 self.parent.show_smile(id_widget_target[len(id_widget_target) - 1])
                 self.parent.write_attempt(HitError.HIT, id_widget_source, id_widget_target)
                 self.parent.remove_widget(self)
                 self.touchedMe = False
 
             else:
-                # TODO
-                # devolver o source para a origem
                 self.reset_colors()
+                self.parent.colocar_source_na_origem(self.clicked_wid)
                 if collision:
                     self.parent.incrementa_erro()
                     self.parent.write_attempt(HitError.ERROR, id_widget_source, id_widget_target)
                     if self.parent.isTT:
                         self.parent.remove_widget(self)
-                    else:
-                        self.parent.colocar_source_na_origem(self.clicked_wid)
                 self.touchedMe = False
 
         else:

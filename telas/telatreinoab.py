@@ -230,8 +230,8 @@ class TelaTreinoAB(Screen):
 
     def write_attempt(self, hit_error, id_widget_source, id_widget_target):
         logging.debug(
-            'TelaTreinoAB.write_attempt: writing attempt Hit?{}:{} {}-{}'.format(hit_error, hit_error.value,
-                                                                                 id_widget_source, id_widget_target))
+            'TelaTreinoAB.write_attempt: writing attempt Hit?{} {}-{}'.format(hit_error.value,
+                                                                              id_widget_source, id_widget_target))
 
         letter_number_figura_s = self.get_imagens_source('wid-si' + str(id_widget_source[len(id_widget_source) - 1]))
         letter_number_figura_t = self.get_imagens_target('wid-ti' + str(id_widget_target[len(id_widget_target) - 1]))
@@ -259,7 +259,6 @@ class TelaTreinoAB(Screen):
         self.manager.acertos_total_str = 'Acertos:  ' + str(self.manager.acertos_total)
         self.manager.latencia_acerto_str = "Latencia acerto: {0:.2f}".format(
             Clock.get_time() - self.manager.latencia) + ' segundos'
-        self.manager.acertos_consecutivos()
         self.validate_troca_tela()
 
     def validate_troca_tela(self):
@@ -268,11 +267,10 @@ class TelaTreinoAB(Screen):
             Clock.schedule_once(self.troca_tela, 0.5)
 
     def troca_tela(self, delta):
-        proxima_tela = 'TelaTreinoDE'
         logging.debug('TelaTreinoAB.troca_tela: trocando tela de {} para {}'.format('ajustar este valor (nulo quando '
                                                                                     'troca de tela): '
                                                                                     'self.manager.current',
-                                                                                    proxima_tela))
+                                                                                    'TelaTreinoDE'))
         Clock.unschedule(self.troca_tela)
         self.manager.tela_AB_finished = True
         self.manager.troca_tela()
