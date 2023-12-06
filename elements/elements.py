@@ -36,12 +36,15 @@ class SourcePicture(Label):
         self.touchedMe = False
 
     def on_touch_down(self, touch):
-        self.touchedMe = self.collide_point(touch.x, touch.y)
-        if self.touchedMe:
-            logging.debug('on_touch_down: Clicked in wid=[{}]'.format(self.wid))
-            self.clicked_wid = self.wid
+        if not self.parent.screen_blocked:
+            self.touchedMe = self.collide_point(touch.x, touch.y)
+            if self.touchedMe:
+                logging.debug('on_touch_down: Clicked in wid=[{}]'.format(self.wid))
+                self.clicked_wid = self.wid
+            else:
+                logging.debug('on_touch_down: Clicked in nothing')
         else:
-            logging.debug('on_touch_down: Clicked in nothing')
+            logging.debug('on_touch_down: screen Blocked')
 
     def on_touch_up(self, touch):
 
@@ -74,6 +77,7 @@ class SourcePicture(Label):
 
         else:
             self.touchedMe = False
+
 
     def on_touch_move(self, touch):
         if self.touchedMe:

@@ -30,9 +30,11 @@ class TelaTreinoAB(Screen):
     combinacoes = ListProperty()
     acertos = 0
     erros = 0
+    timeout = 1.0
     telaatual = StringProperty()
     should_show_smile = True
     isTT = False
+    screen_blocked = False
 
     def __init__(self, **kw):
         super(TelaTreinoAB, self).__init__(**kw)
@@ -198,17 +200,23 @@ class TelaTreinoAB(Screen):
         if int(number) == 3:
             self.ids._smile3.source = 'figuras/smile.png'
             apagar_widget_id = self.ids._smile3
-
         self.desaparecer_smile(apagar_widget_id)
+        self.block_tela()
+
+    def block_tela(self):
+        self.screen_blocked = True
+        Clock.schedule_once(self.unclock_screen, self.timeout)
+
+    def unclock_screen(self, delta):
+        self.screen_blocked = False
 
     def desaparecer_smile(self, apagar_widget_id):
         logging.debug('desaparecer_smile: smile a ser retirado wis={}'.format(apagar_widget_id))
         callback = self.apagar_smiles
-        timeout = 2.0
         logging.debug(
-            'desaparecer_smile: scheduled {} with {} timeout for smile wid={}'.format(callback.__name__, timeout,
+            'desaparecer_smile: scheduled {} with {} timeout for smile wid={}'.format(callback.__name__, self.timeout,
                                                                                       apagar_widget_id))
-        Clock.schedule_once(partial(callback, apagar_widget_id, apagar_widget_id), timeout)
+        Clock.schedule_once(partial(callback, apagar_widget_id, apagar_widget_id), self.timeout)
 
     def apagar_smiles(self, apagar_widget_id, *args, **keywords):
         logging.debug('apagar_smiles: removido smiles wid={}'.format(apagar_widget_id))
@@ -247,7 +255,7 @@ class TelaTreinoAB(Screen):
                           consecutive_hits=self.manager.consecutive_hists)
 
         print(attempt)
-        self.manager.write_attempt(attempt)
+        self.manager.write_attempt(attempt, self.name)
 
     def incrementa_acerto(self):
         logging.debug(

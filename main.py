@@ -346,9 +346,11 @@ class GerenciadorDeTelas(ScreenManager):
         result_log.create_result_file()
         self.result_log = result_log
 
-    def write_attempt(self, attempt):
-        self.result_log.attempts.append(attempt)
-        self.result_log.write_attempt(attempt)
+    def write_attempt(self, attempt, name):
+        if 'AB' in name:
+            self.result_log.attempts_ab.append(attempt)
+        else:
+            self.result_log.attempts_de.append(attempt)
 
     def finalizar_result_file(self):
         self.result_log.end_time = datetime.now()

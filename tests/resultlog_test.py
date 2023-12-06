@@ -35,7 +35,7 @@ class ResultLogTest(unittest.TestCase):
                                           model=Figura.A2.value, key_model=Figura.A2.value[1], consecutive_hits=0,
                                           latency_from_screen=datetime.now(), hit_or_error=HitError.ERROR)
 
-    def test_create_valid_result_log_filename_with_participant(self):
+    def test_creating_valid_result_log_filename_with_participant(self):
         result_log = self.result_log
         result_log.participant = self.participant
         result_log.test_type = self.test_type
@@ -52,7 +52,7 @@ class ResultLogTest(unittest.TestCase):
             "%Y%M%d-%H%M%S") + '_' +
                          result_log.test_type.replace(' ', '').replace('/', '') + '.csv')
 
-    def test_create_valid_result_log_filename_without_participant(self):
+    def test_creatinbg_valid_result_log_filename_without_participant(self):
         result_log = self.result_log
         result_log.participant = ''
         result_log.test_type = self.test_type
@@ -88,25 +88,19 @@ class ResultLogTest(unittest.TestCase):
         result_log.end_time = datetime.now()
         result_log.write_end_time()
 
-    def test_generate_csv_from_attempt(self):
+    def test_adding_attemptsAB_and_attemptsDE(self):
+        attempts_ab = list()
+        attempts_ab.append(self.attemptA1Equals)
+        attempts_ab.append(self.attemptA2NotEquals)
+        attempts_de = list()
+        attempts_de.append(self.attemptA1Equals)
+        attempts_de.append(self.attemptA2NotEquals)
 
-        attempt: Attempt
+        self.result_log.attemptsAB = attempts_ab
+        self.result_log.attemptsDE = attempts_de
 
-        l =csv.reader(['a,2'])
-        for li in l:
-            print(li)
-        # print(csv.writer(self.attemptA1Equals))
-        # attempt = self.attemptA1Equals
-        # csv_generated = generate_csv(self.attemptA1Equals)
-        # csv = ""
-        # csv += attempt.comparation + ","
-        # csv += attempt.key_comparation + ","
-        # csv += attempt.model + ","
-        # csv += attempt.key_model + ","
-        # csv += attempt.hit_or_error.value + ","
-        # csv += str(attempt.consecutive_hits) + ","
-        # csv += str(attempt.latency_from_screen)
-        # self.assertEqual(csv_generated, csv)
+        self.assertEqual(len(self.result_log.attemptsAB), 2)
+        self.assertEqual(len(self.result_log.attemptsDE), 2)
 
     def test_open_file_mocked(self):
         with patch('builtins.open', mock_open(read_data='test')) as m:
