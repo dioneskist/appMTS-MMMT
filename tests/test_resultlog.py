@@ -37,10 +37,10 @@ class ResultLogTest(unittest.TestCase):
 
         self.attemptA1Equals = Attempt(comparation=Figura.A1.value, key_comparation=Figura.A1.value[1],
                                        model=Figura.A1.value, key_model=Figura.A1.value[1], consecutive_hits=0,
-                                       latency_from_screen=self.deltatime_1_minute, hit_or_error=HitError.HIT)
+                                       latency_from_screen=self.deltatime_1_minute, hit_or_error=HitError.HIT.value)
         self.attemptA2NotEquals = Attempt(comparation=Figura.A1.value, key_comparation=Figura.A1.value[1],
                                           model=Figura.A2.value, key_model=Figura.A2.value[1], consecutive_hits=0,
-                                          latency_from_screen=self.deltatime_2_minute, hit_or_error=HitError.ERROR)
+                                          latency_from_screen=self.deltatime_2_minute, hit_or_error=HitError.ERROR.value)
 
     def test_creating_valid_result_log_filename_with_participant(self):
         self.result_log.participant = self.participant
@@ -68,20 +68,24 @@ class ResultLogTest(unittest.TestCase):
     def test_2_attempts_equals_human(self):
         a1 = Attempt(comparation=Figura.A1.value, key_comparation=Figura.A1.value[1],
                      model=Figura.A1.value, key_model=Figura.A1.value[1], consecutive_hits=0,
-                     latency_from_screen=self.deltatime_1_minute, hit_or_error=HitError.HIT)
+                     latency_from_screen=self.deltatime_1_minute, hit_or_error=HitError.HIT.value)
         a1_csv = (
-                    a1.comparation + "," + a1.key_comparation + "," + a1.model + "," + a1.key_model + "," +
-                    a1.hit_or_error.HIT.value
-                    + "," + str(a1.consecutive_hits) + "," + str(self.deltatime_1_minute))
+                a1.comparation + "," + a1.key_comparation + "," + a1.model + "," + a1.key_model + "," +
+                HitError.HIT.value
+                + "," + str(a1.consecutive_hits) + "," + str(self.deltatime_1_minute))
         a2 = Attempt(comparation=Figura.A1.value, key_comparation=Figura.A1.value[1],
                      model=Figura.A2.value, key_model=Figura.A2.value[1], consecutive_hits=0,
-                     latency_from_screen=self.deltatime_5_minute, hit_or_error=HitError.ERROR)
-        a2_csv = (
-                a2.comparation + "," + a2.key_comparation + "," + a2.model + "," + a2.key_model + "," +
-                a2.hit_or_error.ERROR.value
-                + "," + str(a2.consecutive_hits) + "," + str(self.deltatime_5_minute))
+                     latency_from_screen=self.deltatime_5_minute, hit_or_error=HitError.ERROR.value)
+        a2_csv = (a2.comparation + "," + a2.key_comparation + "," + a2.model + "," + a2.key_model + "," +
+                  HitError.ERROR.value + "," + str(a2.consecutive_hits) + "," + str(self.deltatime_5_minute))
         self.assertEqual(a1_csv, ResultLog.attempt2csv(a1))
         self.assertEqual(a2_csv, ResultLog.attempt2csv(a2))
+
+        a1a2_csv = a1_csv + '\n' + a2_csv + '\n'
+        a1a2_csv_with_header = ('COMPARAÇÃO,CHAVE COMPARAÇÃO,MODELO,CHAVE MODELO,A/E,ACERTO CONS.,LATÊNCIA\n' +
+                                a1_csv + '\n' + a2_csv + '\n')
+        self.assertEqual(a1a2_csv, ResultLog.attempts2csv([a1, a2], with_header=False))
+        self.assertEqual(a1a2_csv_with_header, ResultLog.attempts2csv([a1, a2], with_header=True))
 
     def test_2_attempts_not_equals_and_total_errors(self):
         result_log = self.result_log
@@ -137,16 +141,17 @@ class ResultLogTest(unittest.TestCase):
         result_log1 = ResultLog()
         result_log1.date = self.date
         result_log1.start_time = self.start_time
+        result_log1.end_time = self.deltatime_5_minute
         result_log1.participant = self.participant
         result_log1.test_type = self.test_type
         result_log1.initialize_attempts()
 
         a1 = Attempt(comparation=Figura.A1.value, key_comparation=Figura.A1.value[1],
                      model=Figura.A1.value, key_model=Figura.A1.value[1], consecutive_hits=0,
-                     latency_from_screen=self.deltatime_1_minute, hit_or_error=HitError.HIT)
+                     latency_from_screen=self.deltatime_1_minute, hit_or_error=HitError.HIT.value)
         a2 = Attempt(comparation=Figura.A1.value, key_comparation=Figura.A1.value[1],
                      model=Figura.A2.value, key_model=Figura.A2.value[1], consecutive_hits=0,
-                     latency_from_screen=self.deltatime_5_minute, hit_or_error=HitError.ERROR)
+                     latency_from_screen=self.deltatime_5_minute, hit_or_error=HitError.ERROR.value)
         # create mt
         result_log1.attempts_mt.attempts.append(a1)
         result_log1.attempts_mt.attempts.append(a1)
@@ -169,7 +174,7 @@ class ResultLogTest(unittest.TestCase):
         self.assertEqual(result_log1.attempts_mm.latency_total, timedelta(minutes=12))
         self.assertEqual(result_log1.attempts_mt.latency_avg, timedelta(minutes=2))
         self.assertEqual(result_log1.attempts_mm.latency_avg, timedelta(minutes=3))
-        self.assertEqual(result_log1.end_time, datetime.now())
+        self.assertEqual(result_log1.end_time, self.end_time_5)
         self.assertEqual(result_log1.date, self.date)
         self.assertEqual(result_log1.start_time, self.start_time)
         self.assertEqual(result_log1.attempts_mt.attempts_total, 8)
@@ -178,7 +183,13 @@ class ResultLogTest(unittest.TestCase):
         self.assertEqual(result_log1.attempts_mm.hits_total, 2)
         self.assertEqual(result_log1.attempts_mt.hits_errors, 2)
         self.assertEqual(result_log1.attempts_mm.hits_errors, 2)
-        #
+
+        # test end_time not defined by app.
+        result_log1.end_time = None
+        result_log1.finalyze_resultlog()
+        actual_time = datetime.now()
+        self.assertEqual(result_log1.end_time, actual_time)
+
         # asserts reloaded from pickle
         result_log1_string = pickle.dumps(result_log1)
         result_log_loaded = pickle.loads(result_log1_string)
@@ -213,8 +224,33 @@ class ResultLogTest(unittest.TestCase):
             m.assert_called_once_with(result_log1.filename, 'wb')
             m().write.assert_called_once_with(content)
 
-        csv_final = ''
-        self.assertEqual(csv_final, ResultLog.generate_human_report(result_log1))
+        def add(s):
+            return str(s) + '\n'
+        human_report = add('')
+        human_report += add('Participante: ' + str(result_log1.participant))
+        human_report += add('Data: ' + str(self.date))
+        human_report += add('Hora de Início: ' + str(self.start_time))
+        human_report += add('Hora de conclusão: ' + str(actual_time))
+        human_report += add('Treino/Teste: ' + result_log1.test_type)
+        human_report += add('')
+        human_report += add('Dados MM')
+        human_report += add(ResultLog.attempts2csv(result_log1.attempts_mm.attempts, with_header=True))
+        human_report += add('Latência Total: ' + str(timedelta(minutes=12)))
+        human_report += add('Latência Média: ' + str(timedelta(minutes=3)))
+        human_report += add('Total de Acertos: ' + str(AttemptLog.generate_total_hits(result_log1.attempts_mm.attempts)))
+        human_report += add('Total de Erros: ' + str(AttemptLog.generate_total_errors(result_log1.attempts_mm.attempts)))
+        human_report += add('Total de pareamentos: ' + str(AttemptLog.generate_attempts_total(result_log1.attempts_mm.attempts)))
+        human_report += add('Pareamentos até o critério: ' + str(AttemptLog.generate_attempts_until_condition(result_log1.attempts_mm.attempts)))
+        human_report += add('')
+        human_report += add('Dados MT')
+        human_report += add(ResultLog.attempts2csv(result_log1.attempts_mt.attempts, with_header=True))
+        human_report += add('Latência Total: ' + str(timedelta(minutes=16)))
+        human_report += add('Latência Média: ' + str(timedelta(minutes=2)))
+        human_report += add('Total de Acertos: '+ str(AttemptLog.generate_total_hits(result_log1.attempts_mt.attempts)))
+        human_report += add('Total de Erros: ' + str(AttemptLog.generate_total_errors(result_log1.attempts_mt.attempts)))
+        human_report += add('Total de pareamentos: ' + str(AttemptLog.generate_attempts_total(result_log1.attempts_mt.attempts)))
+        human_report += add('Pareamentos até o critério: ' + str(AttemptLog.generate_attempts_until_condition(result_log1.attempts_mt.attempts)))
+        self.assertEqual(human_report, ResultLog.generate_human_report(result_log1))
 
     def tearDown(self):
         print('teardown')

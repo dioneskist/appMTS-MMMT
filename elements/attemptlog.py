@@ -25,7 +25,7 @@ class AttemptLog:
     def generate_total_hits(cls, attempts):
         count = 0
         for hit in attempts:
-            if hit.hit_or_error == HitError.HIT:
+            if hit.hit_or_error == HitError.HIT.value:
                 count += 1
         return count
 
@@ -33,7 +33,7 @@ class AttemptLog:
     def generate_total_errors(cls, attempts):
         count = 0
         for hit in attempts:
-            if hit.hit_or_error == HitError.ERROR:
+            if hit.hit_or_error == HitError.ERROR.value:
                 count += 1
         return count
 
@@ -51,3 +51,7 @@ class AttemptLog:
         for a in attempts:
             total += a.latency_from_screen
         return total / len(attempts)
+
+    @classmethod
+    def generate_attempts_until_condition(cls, attempts):
+        return 0

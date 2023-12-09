@@ -220,9 +220,9 @@ class TelaTreinoDE(Screen):
 
         # key_comparation is the position on the screen in inverter order
         # position 1 return 3; 2 return 2 and 3 return 1
-        attempt = Attempt(comparation=letter_number_figura_s,
+        attempt = Attempt(comparation=str(letter_number_figura_s).upper(),
                           key_comparation=get_position(id_widget_source[len(id_widget_source) - 1]),
-                          model=letter_number_figura_t,
+                          model=str(letter_number_figura_t).upper(),
                           key_model=get_position(id_widget_target[len(id_widget_target) - 1]),
                           hit_or_error=hit_error.value,
                           latency_from_screen=datetime.now() - self.manager.start_screen_time,

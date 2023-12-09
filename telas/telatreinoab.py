@@ -132,7 +132,7 @@ class TelaTreinoAB(Screen):
             if type(child) == SourcePicture:
                 # carrega filhos do source (imagem)
                 for image in child.children:
-                    if (image.__self__.wid == wid):
+                    if image.__self__.wid == wid:
                         logging.debug('get_imagens_source: validando wid=[{}] e imagem {}'.format(image.__self__.wid,
                                                                                                   image.__self__.source))
                         return self.get_letter_and_number_from_source(image.__self__.source)

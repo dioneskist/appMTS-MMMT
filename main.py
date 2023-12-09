@@ -141,7 +141,7 @@ class GerenciadorDeTelas(ScreenManager):
     result_log: ResultLog
     participant_name = None
     consecutive_hists = None
-    result_log_human = ""
+    result_log_human = StringProperty("")
 
     def acertos_consecutivos(self):
         if self.consecutive_hists is None:
@@ -360,6 +360,7 @@ class GerenciadorDeTelas(ScreenManager):
         self.result_log.finalyze_resultlog()
         ResultLog.write_result_file(self.result_log)
         self.result_log_human = ResultLog.generate_human_report(self.result_log)
+        print(self.result_log_human)
 
     def generate_next_tela(self, proxima):
         logging.debug('generate_next_tela: next tela {}'.format(proxima))
