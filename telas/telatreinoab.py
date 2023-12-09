@@ -30,7 +30,8 @@ class TelaTreinoAB(Screen):
     combinacoes = ListProperty()
     acertos = 0
     erros = 0
-    timeout = 1.0
+    timeout_screen_blocker = 1.0
+    timeout_troca_tela = 1.5
     telaatual = StringProperty()
     should_show_smile = True
     isTT = False
@@ -205,7 +206,7 @@ class TelaTreinoAB(Screen):
 
     def block_tela(self):
         self.screen_blocked = True
-        Clock.schedule_once(self.unclock_screen, self.timeout)
+        Clock.schedule_once(self.unclock_screen, self.timeout_screen_blocker)
 
     def unclock_screen(self, delta):
         self.screen_blocked = False
@@ -214,9 +215,9 @@ class TelaTreinoAB(Screen):
         logging.debug('desaparecer_smile: smile a ser retirado wis={}'.format(apagar_widget_id))
         callback = self.apagar_smiles
         logging.debug(
-            'desaparecer_smile: scheduled {} with {} timeout for smile wid={}'.format(callback.__name__, self.timeout,
+            'desaparecer_smile: scheduled {} with {} timeout for smile wid={}'.format(callback.__name__, self.timeout_screen_blocker,
                                                                                       apagar_widget_id))
-        Clock.schedule_once(partial(callback, apagar_widget_id, apagar_widget_id), self.timeout)
+        Clock.schedule_once(partial(callback, apagar_widget_id, apagar_widget_id), self.timeout_screen_blocker)
 
     def apagar_smiles(self, apagar_widget_id, *args, **keywords):
         logging.debug('apagar_smiles: removido smiles wid={}'.format(apagar_widget_id))
@@ -271,14 +272,15 @@ class TelaTreinoAB(Screen):
 
     def validate_troca_tela(self):
         if self.acertos == 3:
+            self.screen_blocked = True
             logging.info('TelaTreinoAB.incrementa_acerto: ACERTOU TUDO ({} acertos) !!!'.format(self.acertos))
-            Clock.schedule_once(self.troca_tela, 0.5)
+            Clock.schedule_once(self.troca_tela, self.timeout_troca_tela)
 
     def troca_tela(self, delta):
         logging.debug('TelaTreinoAB.troca_tela: trocando tela de {} para {}'.format('ajustar este valor (nulo quando '
                                                                                     'troca de tela): '
                                                                                     'self.manager.current',
                                                                                     'TelaTreinoDE'))
-        Clock.unschedule(self.troca_tela)
+        self.screen_blocked = False
         self.manager.tela_AB_finished = True
         self.manager.troca_tela()

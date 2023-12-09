@@ -28,7 +28,8 @@ class TelaTreinoDE(Screen):
     combinacoes = ListProperty()
     acertos = 0
     erros = 0
-    timeout = 1.0
+    timeout_screen_blocker = 1.0
+    timeout_troca_tela = 1.5
     telaatual = StringProperty()
     should_show_smile = True
     isTT = False
@@ -182,22 +183,15 @@ class TelaTreinoDE(Screen):
             self.ids._smile1.source = 'figuras/smile.png'
             apagar_widget_id = self.ids._smile1
             self.desaparecer_smile(apagar_widget_id)
-            self.block_tela()
-
-    def block_tela(self):
-        self.screen_blocked = True
-        Clock.schedule_once(self.unclock_screen, self.timeout)
-
-    def unclock_screen(self, delta):
-        self.screen_blocked = False
+            self.screen_blocked = True
 
     def desaparecer_smile(self, apagar_widget_id):
         logging.debug('desaparecer_smile: smile a ser retirado wis={}'.format(apagar_widget_id))
         callback = self.apagar_smiles
         logging.debug(
-            'desaparecer_smile: scheduled {} with {} timeout for smile wid={}'.format(callback.__name__, self.timeout,
+            'desaparecer_smile: scheduled {} with {} timeout for smile wid={}'.format(callback.__name__, self.timeout_screen_blocker,
                                                                                       apagar_widget_id))
-        Clock.schedule_once(partial(callback, apagar_widget_id, apagar_widget_id), self.timeout)
+        Clock.schedule_once(partial(callback, apagar_widget_id, apagar_widget_id), self.timeout_screen_blocker)
 
     def apagar_smiles(self, apagar_widget_id, *args, **keywords):
         logging.debug('apagar_smiles: removido smiles wid={}'.format(apagar_widget_id))
@@ -251,11 +245,12 @@ class TelaTreinoDE(Screen):
 
     def validate_troca_tela(self):
         if self.acertos == 1:
+            self.screen_blocked = True
             logging.info('Telateste.incrementa_acerto: ACERTOU TUDO ({} acertos) !!!'.format(self.acertos))
-            Clock.schedule_once(self.troca_tela, 0.5)
+            Clock.schedule_once(self.troca_tela, self.timeout_troca_tela)
 
     def troca_tela(self, delta):
-        Clock.unschedule(self.troca_tela)
+        self.screen_blocked = False
         self.manager.tela_DE_finished = True
         self.manager.tela_DE_respondidas += 1
         self.manager.troca_tela()

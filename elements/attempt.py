@@ -13,4 +13,4 @@ class Attempt:
     key_model: str
     hit_or_error: HitError
     consecutive_hits: int
-    latency_from_screen: datetime.datetime
+    latency_from_screen: datetime.timedelta

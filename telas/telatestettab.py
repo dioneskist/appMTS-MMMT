@@ -34,8 +34,8 @@ class TelaTesteTTAB(Screen):
     acertos = 0
     erros = 0
     telaatual = StringProperty()
-    timeout = 1.0
-
+    timeout_screen_block = 1.0
+    timeout_troca_tela = 1.5
     should_show_smile = False
     isTT = True
     screen_blocked = False
@@ -214,7 +214,7 @@ class TelaTesteTTAB(Screen):
 
     def block_tela(self):
         self.screen_blocked = True
-        Clock.schedule_once(self.unclock_screen, self.timeout)
+        Clock.schedule_once(self.unclock_screen, self.timeout_screen_block)
 
     def unclock_screen(self, delta):
         self.screen_blocked = False
@@ -223,9 +223,9 @@ class TelaTesteTTAB(Screen):
         logging.debug('desaparecer_smile: smile a ser retirado wis={}'.format(apagar_widget_id))
         callback = self.apagar_smiles
         logging.debug(
-            'desaparecer_smile: scheduled {} with {} timeout for smile wid={}'.format(callback.__name__, self.timeout,
+            'desaparecer_smile: scheduled {} with {} timeout for smile wid={}'.format(callback.__name__, self.timeout_screen_block,
                                                                                       apagar_widget_id))
-        Clock.schedule_once(partial(callback, apagar_widget_id, apagar_widget_id), self.timeout)
+        Clock.schedule_once(partial(callback, apagar_widget_id, apagar_widget_id), self.timeout_screen_block)
 
     def apagar_smiles(self, apagar_widget_id, *args, **keywords):
         logging.debug('apagar_smiles: removido smiles wid={}'.format(apagar_widget_id))
@@ -283,12 +283,14 @@ class TelaTesteTTAB(Screen):
     def validate_troca_tela(self):
         if not self.isTT:
             if self.acertos == 3:
+                self.screen_blocked = True
                 logging.info('TelaTesteTTAB.incrementa_acerto: ACERTOU TUDO ({} acertos) !!!'.format(self.acertos))
-                Clock.schedule_once(self.troca_tela, 0.5)
+                Clock.schedule_once(self.troca_tela, self.timeout_troca_tela)
         else:
             if self.acertos + self.erros == 3:
+                self.screen_blocked = True
                 logging.info('TelaTesteTTAB.incrementa_acerto+erro: isTT ({}+{} acertos + erros = {}) !!!'.format(self.acertos, self.erros, self.acertos+self.erros))
-                Clock.schedule_once(self.troca_tela, 0.5)
+                Clock.schedule_once(self.troca_tela, self.timeout_troca_tela)
 
     def troca_tela(self, delta):
         proxima_tela = 'TelaTreinoDE'
@@ -296,6 +298,6 @@ class TelaTesteTTAB(Screen):
                                                                                      'troca de tela): '
                                                                                      'self.manager.current',
                                                                                      proxima_tela))
-        Clock.unschedule(self.troca_tela)
+        self.screen_blocked = False
         self.manager.tela_AB_finished = True
         self.manager.troca_tela()

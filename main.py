@@ -15,6 +15,8 @@ from kivy.uix.image import Image
 from kivy.uix.label import Label
 from kivy.uix.screenmanager import ScreenManager, Screen
 
+from elements import resultlog
+from elements.attemptlog import AttemptLog
 from elements.resultlog import ResultLog
 from telas.blanktela import BlankTela
 from telas.instrucoes import TelaInstrucoes
@@ -25,6 +27,7 @@ from telas.telatt import TelaTT
 from telas.telatreinode import TelaTreinoDE
 from telas.telatreinoab import TelaTreinoAB
 from telas.telafinal import TelaFinal
+from telas.telafinalresult import TelaFinalResult
 from telas.participante import TelaNomeParticipante
 from elements.elements import SourcePicture, TargetPicture, Imagem
 from telas.telaVisualizar import TelaVisualizar
@@ -135,9 +138,10 @@ class GerenciadorDeTelas(ScreenManager):
     total_telas_mistoEF_validas = 0
 
     # result log and repport
-    result_log = None
+    result_log: ResultLog
     participant_name = None
     consecutive_hists = None
+    result_log_human = ""
 
     def acertos_consecutivos(self):
         if self.consecutive_hists is None:
@@ -215,7 +219,7 @@ class GerenciadorDeTelas(ScreenManager):
             tela treino usa as letras da posica 3 e 4 (AB) 'TR AB/DE'
             """
 
-            self.total_hits_necessarios_saida = 12
+            self.total_hits_necessarios_saida = 6
             self.tempo_maximo = 600.0
 
             self.all_combinacoes_XY, self.all_combinacoes_ZW = preparar_combinacoes(self.letters)
@@ -335,35 +339,27 @@ class GerenciadorDeTelas(ScreenManager):
 
     def iniciar_treinos(self):
         self.iniciar_Time()
-        self.gerar_resultlog_file()
+        self.start_resultlog()
         self.current = self.primeira_tela
 
-    def gerar_resultlog_file(self):
+    def start_resultlog(self):
         result_log = ResultLog()
         result_log.test_type = self.letters
         result_log.participant = self.participant_name
         result_log.generate_filename()
-        result_log.create_result_file()
+        result_log.initialize_attempts()
         self.result_log = result_log
 
     def write_attempt(self, attempt, name):
         if 'AB' in name:
-            self.result_log.attempts_ab.append(attempt)
+            self.result_log.attempts_mt.attempts.append(attempt)
         else:
-            self.result_log.attempts_de.append(attempt)
+            self.result_log.attempts_mm.attempts.append(attempt)
 
     def finalizar_result_file(self):
-        self.result_log.end_time = datetime.now()
-        self.result_log.write_end_time()
-
-        self.result_log.hits = self.acertos_total
-        self.result_log.errors = self.erros_total
-        self.result_log.latency_total = datetime.now() - self.start_screen_time
-        self.result_log.pareamentos_total = self.acertos_total + self.erros_total
-        self.result_log.latency_avg = self.result_log.latency_total / self.result_log.pareamentos_total
-        self.result_log.pareamentos_ate_acerto = 0
-        self.result_log.write_result_file()
-        self.result_log.write_excel_file()
+        self.result_log.finalyze_resultlog()
+        ResultLog.write_result_file(self.result_log)
+        self.result_log_human = ResultLog.generate_human_report(self.result_log)
 
     def generate_next_tela(self, proxima):
         logging.debug('generate_next_tela: next tela {}'.format(proxima))
@@ -371,12 +367,12 @@ class GerenciadorDeTelas(ScreenManager):
             if 'AB' in proxima:
                 tela = TelaTesteTTAB(name=proxima, combinacoes=self.all_combinacoes_XY[self.tela_AB_current],
                                      ordem=self.ordem)
-                logging.debug('generate_next_tela Gerada tela {} {}'.format(tela.name, tela))
+                logging.debug('generate_next_tela: Gerada tela {} {}'.format(tela.name, tela))
                 return tela
             else:
                 tela = TelaTesteTTDE(name=proxima, combinacoes=self.all_combinacoes_ZW[self.tela_DE_current],
                                      ordem=self.ordem)
-                logging.debug('generate_next_tela Gerada tela {} {}'.format(tela.name, tela))
+                logging.debug('generate_next_tela: Gerada tela {} {}'.format(tela.name, tela))
                 return tela
         elif 'Treino' in proxima:
             if self.isMisto:
@@ -445,7 +441,8 @@ class GerenciadorDeTelas(ScreenManager):
         logging.debug('Main.troca_tela: tempo decorrido entre acerto anterior e agora {}.'.format(tempo_decorrido))
 
         # valida final dos treinos e testes
-        if self.total_acertoserros_necessarios_saida == self.total_hits_necessarios_saida or tempo_decorrido >= self.tempo_maximo:
+        if (self.total_acertoserros_necessarios_saida == self.total_hits_necessarios_saida or
+                tempo_decorrido >= self.tempo_maximo):
             tela_final = ''
             logging.debug('Main.troca_tela: total de acertos/erros {} letters {}.'.format(
                 self.total_acertoserros_necessarios_saida, self.letters))

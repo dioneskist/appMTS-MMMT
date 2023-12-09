@@ -7,6 +7,8 @@
         name: 'instrucoes'
     TelaNomeParticipante:
         name: 'participante'
+    TelaFinalResult:
+        name: 'telaresult'
 
 <Screen>
     on_leave: app.previous_screen = self.name
@@ -180,18 +182,6 @@
 
 <TelaTreinoAB>:
     targetPictures: [_t1, _t2, _t3]
-    LabelAcertosTotal:
-        text: app.root.acertos_total_str
-    LabelAcertosLatencia:
-        text: app.root.latencia_acerto_str
-    LabelTempoTotal:
-        text: app.root.tempo_decorrido_str
-    LabelErrosTotal:
-        text: app.root.erros_total_str
-    LabelErrosLatencia:
-        text: app.root.latencia_erro_str
-    LabelTelaAtual:
-        text: root.telaatual
     Smile:
         id: _smile1
         pos: 555, 207
@@ -307,18 +297,6 @@
 
 <TelaTreinoDE>:
     targetPictures: [_t1]
-    LabelAcertosTotal:
-        text: app.root.acertos_total_str
-    LabelAcertosLatencia:
-        text: app.root.latencia_acerto_str
-    LabelTempoTotal:
-        text: app.root.tempo_decorrido_str
-    LabelErrosTotal:
-        text: app.root.erros_total_str
-    LabelErrosLatencia:
-        text: app.root.latencia_erro_str
-    LabelTelaAtual:
-        text: root.telaatual
     Smile:
         id: _smile1
         pos: 555, 847
@@ -399,24 +377,12 @@
             id: _si3
             wid: 'wid-si3'
             source: self._imagem
-            size: self.parent.width * 0.90, self.parent.height * 0.90
             pos: self.parent.pos[0] + ((self.parent.width - self.width) / 2 ), self.parent.pos[1] + ((self.parent.height - self.height) / 2 )
+            size: self.parent.width * 0.90, self.parent.height * 0.90
             fit_mode: 'fill'
 
 <TelaTesteTTAB>:
     targetPictures: [_t1, _t2, _t3]
-    LabelAcertosTotal:
-        text: app.root.acertos_total_str
-    LabelAcertosLatencia:
-        text: app.root.latencia_acerto_str
-    LabelTempoTotal:
-        text: app.root.tempo_decorrido_str
-    LabelErrosTotal:
-        text: app.root.erros_total_str
-    LabelErrosLatencia:
-        text: app.root.latencia_erro_str
-    LabelTelaAtual:
-        text: root.telaatual
     Smile:
         id: _smile1
         pos: 555, 207
@@ -529,21 +495,8 @@
             size: self.parent.width * 0.90, self.parent.height * 0.90
             fit_mode: 'fill'
 
-
 <TelaTesteTTDE>:
     targetPictures: [_t1]
-    LabelAcertosTotal:
-        text: app.root.acertos_total_str
-    LabelAcertosLatencia:
-        text: app.root.latencia_acerto_str
-    LabelTempoTotal:
-        text: app.root.tempo_decorrido_str
-    LabelErrosTotal:
-        text: app.root.erros_total_str
-    LabelErrosLatencia:
-        text: app.root.latencia_erro_str
-    LabelTelaAtual:
-        text: root.telaatual
     Smile:
         id: _smile1
         pos: 555, 847
@@ -624,8 +577,8 @@
             id: _si3
             wid: 'wid-si3'
             source: self._imagem
-            size: self.parent.width * 0.90, self.parent.height * 0.90
             pos: self.parent.pos[0] + ((self.parent.width - self.width) / 2 ), self.parent.pos[1] + ((self.parent.height - self.height) / 2 )
+            size: self.parent.width * 0.90, self.parent.height * 0.90
             fit_mode: 'fill'
 
 <TelaFinal>:
@@ -633,10 +586,30 @@
         Image:
             source: 'figuras/joinha.jpg'
         MyButton:
-            text: 'Voltar ao Início'
+            text: 'Voltar ao Início '
             size_hint_y: None
             on_release:
                 root.manager.reiniciar_app()
+        MyButton:
+            text: 'Ver resultado'
+            size_hint_y: None
+            on_release:
+                root.manager.current = 'telaresult'
+                root.manager.transition.direction = 'left'
+        MyButton:
+            text: 'Sair'
+            size_hint_y: None
+            on_release: app.stop()
+
+<TelaFinalResult>:
+    MyBoxLayout:
+        Label:
+            id: _result
+            text: 'Should not be empty'
+            size_hint_y: None
+            height: self.texture_size[1]
+            text_size: self.width, None
+            color: 0,0,0,1
         MyButton:
             text: 'Sair'
             size_hint_y: None
