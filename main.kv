@@ -586,11 +586,6 @@
         Image:
             source: 'figuras/joinha.jpg'
         MyButton:
-            text: 'Voltar ao Início '
-            size_hint_y: None
-            on_release:
-                root.manager.reiniciar_app()
-        MyButton:
             text: 'Ver resultado'
             size_hint_y: None
             on_release:
@@ -605,7 +600,7 @@
     MyBoxLayout:
         Label:
             id: _result
-            text: 'should not be empty'
+            text: root._result
             size_hint_y: None
             height: self.texture_size[1]
             text_size: self.width, None

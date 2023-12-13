@@ -30,6 +30,7 @@ class TelaTreinoAB(Screen):
     combinacoes = ListProperty()
     acertos = 0
     erros = 0
+    start_screen_time = None
     timeout_screen_blocker = 1.0
     timeout_troca_tela = 1.5
     telaatual = StringProperty()
@@ -50,8 +51,7 @@ class TelaTreinoAB(Screen):
         self.popula_imagens_source()
 
         logging.debug('on_enter: {} com ids: {}'.format(self.name, self.ids))
-        self.manager.latencia = Clock.get_time()
-        self.manager.start_screen_time = datetime.now()
+        self.start_screen_time = datetime.now()
         self.telaatual = self.parent.current
 
     def on_leave(self, *args):
@@ -230,11 +230,7 @@ class TelaTreinoAB(Screen):
         self.erros += 1
         self.manager.acertos_total = 0
         self.manager.total_acertoserros_necessarios_saida = 0
-        self.manager.acertos_total_str = 'Acertos:  ' + str(self.manager.acertos_total)
         self.manager.erros_total += 1
-        self.manager.erros_total_str = 'Erros:  ' + str(self.manager.erros_total)
-        self.manager.latencia_erro_str = "Latencia erro: {0:.2f}".format(
-            Clock.get_time() - self.manager.latencia) + 'segundos'
         self.manager.erros_consecutivos()
 
     def write_attempt(self, hit_error, id_widget_source, id_widget_target):
@@ -252,7 +248,7 @@ class TelaTreinoAB(Screen):
                           model=str(letter_number_figura_t).upper(),
                           key_model=get_position(id_widget_target[len(id_widget_target) - 1]),
                           hit_or_error=hit_error.value,
-                          latency_from_screen=datetime.now() - self.manager.start_screen_time,
+                          latency_from_screen=datetime.now() - self.start_screen_time,
                           consecutive_hits=self.manager.consecutive_hists)
 
         print(attempt)
@@ -265,9 +261,6 @@ class TelaTreinoAB(Screen):
         self.acertos += 1
         self.manager.acertos_total += 1
         self.manager.total_acertoserros_necessarios_saida += 1
-        self.manager.acertos_total_str = 'Acertos:  ' + str(self.manager.acertos_total)
-        self.manager.latencia_acerto_str = "Latencia acerto: {0:.2f}".format(
-            Clock.get_time() - self.manager.latencia) + ' segundos'
         self.validate_troca_tela()
 
     def validate_troca_tela(self):

@@ -112,12 +112,6 @@ class GerenciadorDeTelas(ScreenManager):
     tempo_decorrido = None
     tempo_decorrido_str = StringProperty()
 
-    latencia = None
-    latencia_acerto_str = StringProperty()
-    latencia_erro_str = StringProperty()
-
-    start_screen_time = None
-
     # primeira tela
     primeira_tela = None
     ultima = None
@@ -141,7 +135,7 @@ class GerenciadorDeTelas(ScreenManager):
     result_log: ResultLog
     participant_name = None
     consecutive_hists = None
-    result_log_human = StringProperty("")
+    result_log_human = StringProperty()
 
     def acertos_consecutivos(self):
         if self.consecutive_hists is None:
@@ -219,7 +213,7 @@ class GerenciadorDeTelas(ScreenManager):
             tela treino usa as letras da posica 3 e 4 (AB) 'TR AB/DE'
             """
 
-            self.total_hits_necessarios_saida = 6
+            self.total_hits_necessarios_saida = 12
             self.tempo_maximo = 600.0
 
             self.all_combinacoes_XY, self.all_combinacoes_ZW = preparar_combinacoes(self.letters)
@@ -377,7 +371,7 @@ class GerenciadorDeTelas(ScreenManager):
                 return tela
         elif 'Treino' in proxima:
             if self.isMisto:
-                if self.current_treino_misto is 'BC':
+                if 'BC' in self.current_treino_misto:
                     if 'AB' in proxima:
                         tela = TelaTreinoAB(name=proxima,
                                             combinacoes=self.all_combinacoes_XY_mistoBC[self.tela_misto_AB_current],
@@ -482,7 +476,7 @@ class GerenciadorDeTelas(ScreenManager):
                 if self.tela_DE_respondidas == 3:
                     self.tela_DE_respondidas = 0
                     if self.isMisto:
-                        if self.current_treino_misto is 'AB':
+                        if 'AB' in self.current_treino_misto:
                             self.current_treino_misto = 'BC'
                         else:
                             self.current_treino_misto = 'AB'

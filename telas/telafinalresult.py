@@ -1,6 +1,9 @@
+from kivy.properties import StringProperty
 from kivy.uix.screenmanager import Screen
 
 
 class TelaFinalResult(Screen):
-    def __enter__(self):
-        self.ids._result.text = str(self.manager.result_log_human)
+    _result = StringProperty()
+
+    def on_enter(self, *args):
+        self._result = str(self.manager.result_log_human)
