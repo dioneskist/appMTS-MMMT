@@ -345,7 +345,7 @@ class GerenciadorDeTelas(ScreenManager):
         self.result_log = result_log
 
     def write_attempt(self, attempt, name):
-        if 'AB' in name:
+        if 'DE' in name:
             self.result_log.attempts_mt.attempts.append(attempt)
         else:
             self.result_log.attempts_mm.attempts.append(attempt)

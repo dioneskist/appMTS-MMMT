@@ -1,13 +1,13 @@
 [app]
 
 # (str) Title of your application
-title = My Application
+title = mts-MMMT - Doutoranda Thaís
 
 # (str) Package name
-package.name = myapp
+package.name = mts-mmmt
 
 # (str) Package domain (needed for android/ios packaging)
-package.domain = org.test
+package.domain = br.com.dsk
 
 # (str) Source code where the main.py live
 source.dir = .
@@ -96,6 +96,7 @@ fullscreen = 0
 # (list) Permissions
 # (See https://python-for-android.readthedocs.io/en/latest/buildoptions/#build-options-1 for all the supported syntaxes and properties)
 #android.permissions = android.permission.INTERNET, (name=android.permission.WRITE_EXTERNAL_STORAGE;maxSdkVersion=18)
+android.permission = WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE
 
 # (list) features (adds uses-feature -tags to manifest)
 #android.features = android.hardware.usb.host
