@@ -32,7 +32,7 @@ class TelaTreinoAB(Screen):
     erros = 0
     start_screen_time = None
     timeout_screen_blocker = 1.0
-    timeout_troca_tela = 1.5
+    timeout_troca_tela = 0.0
     telaatual = StringProperty()
     should_show_smile = True
     isTT = False

@@ -36,7 +36,7 @@ class TelaTesteTTAB(Screen):
     telaatual = StringProperty()
     start_screen_time = None
     timeout_screen_block = 1.0
-    timeout_troca_tela = 1.5
+    timeout_troca_tela = 0.0
     should_show_smile = False
     isTT = True
     screen_blocked = False

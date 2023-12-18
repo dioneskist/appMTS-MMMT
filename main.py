@@ -33,6 +33,7 @@ from elements.elements import SourcePicture, TargetPicture, Imagem
 from telas.telaVisualizar import TelaVisualizar
 import itertools
 import hashlib
+# import xlsxwriter
 
 from utils.screen_combinations import preparar_combinacoes
 
@@ -243,6 +244,7 @@ class GerenciadorDeTelas(ScreenManager):
             """
 
             self.total_hits_necessarios_saida = 18
+            print(self.total_hits_necessarios_saida)
             self.tempo_maximo = 1800.0
 
             self.all_combinacoes_XY, self.all_combinacoes_ZW = preparar_combinacoes(self.letters)

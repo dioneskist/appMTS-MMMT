@@ -31,7 +31,8 @@ class TelaTesteTTDE(Screen):
     telaatual = StringProperty()
     start_screen_time = None
     timeout_screen_blocker = 1.0
-    timeout_troca_tela = 1.5
+    timeout_troca_tela = 0.0
+    timeout_troca_tela_last_element = 0.0
 
     should_show_smile = False
     isTT = True
@@ -250,12 +251,18 @@ class TelaTesteTTDE(Screen):
             if self.acertos == 1:
                 self.screen_blocked = True
                 logging.info('TelaTesteTTDE.incrementa_acerto: ACERTOU TUDO ({} acertos) !!!'.format(self.acertos))
+                # if self.manager.tela_DE_respondidas == 2:
+                #     Clock.schedule_once(self.troca_tela, self.timeout_troca_tela_last_element)
+                # else:
                 Clock.schedule_once(self.troca_tela, self.timeout_troca_tela)
         else:
             if self.acertos == 1 or self.erros == 1:
                 self.screen_blocked = True
                 logging.info('TelaTesteTTAB.incrementa_acerto+erro: isTT ({}+{} acertos + erros = {}) !!!'.format(
                     self.acertos, self.erros, self.acertos + self.erros))
+                # if self.manager.tela_DE_respondidas == 2:
+                #     Clock.schedule_once(self.troca_tela, self.timeout_troca_tela_last_element)
+                # else:
                 Clock.schedule_once(self.troca_tela, self.timeout_troca_tela)
 
     def troca_tela(self, delta):

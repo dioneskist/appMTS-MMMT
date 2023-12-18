@@ -4,7 +4,7 @@
 title = mts-MMMT - Doutoranda Thaís
 
 # (str) Package name
-package.name = mts-mmmt
+package.name = mtsmmmt
 
 # (str) Package domain (needed for android/ios packaging)
 package.domain = br.com.dsk
