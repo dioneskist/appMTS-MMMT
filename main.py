@@ -356,6 +356,8 @@ class GerenciadorDeTelas(ScreenManager):
         self.result_log.finalyze_resultlog()
         ResultLog.write_result_file(self.result_log)
         self.result_log_human = ResultLog.generate_human_report(self.result_log)
+        with open(self.result_log.filename + '.human.txt', 'w') as human_file:
+            human_file.write(self.result_log_human)
         print(self.result_log_human)
 
     def generate_next_tela(self, proxima):
@@ -438,8 +440,9 @@ class GerenciadorDeTelas(ScreenManager):
         logging.debug('Main.troca_tela: tempo decorrido entre acerto anterior e agora {}.'.format(tempo_decorrido))
 
         # valida final dos treinos e testes
-        if (self.total_acertoserros_necessarios_saida == self.total_hits_necessarios_saida or
-                tempo_decorrido >= self.tempo_maximo):
+        if (self.total_acertoserros_necessarios_saida >= self.total_hits_necessarios_saida
+            and (self.tela_DE_respondidas == 3)
+            or tempo_decorrido >= self.tempo_maximo):
             tela_final = ''
             logging.debug('Main.troca_tela: total de acertos/erros {} letters {}.'.format(
                 self.total_acertoserros_necessarios_saida, self.letters))
@@ -456,7 +459,6 @@ class GerenciadorDeTelas(ScreenManager):
                 logging.debug('Main.troca_tela: total de acertos/erros até o momento é {} letters {}.'.format(
                     self.total_acertoserros_necessarios_saida, self.letters))
             else:
-
                 logging.debug('Main.troca_tela: total de acertos até o momento é {}.'.format(
                     self.total_acertoserros_necessarios_saida, self.letters))
             tela_atual = self.current
