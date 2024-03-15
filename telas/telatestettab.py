@@ -208,9 +208,13 @@ class TelaTesteTTAB(Screen):
 
             self.desaparecer_smile(apagar_widget_id)
         else:
-            logging.debug('show_smile: smile doesn\'t show for Test TT'.format())
+            logging.debug('show_smile: smile doesn\'t show for Test TT, but the block time is the same'.format())
+            Clock.schedule_once(self.schedule_time, self.timeout_screen_block)
             self.incrementa_acerto()
             self.block_tela()
+
+    def schedule_time(self, delta):
+        pass
 
     def block_tela(self):
         self.screen_blocked = True

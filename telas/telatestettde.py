@@ -188,9 +188,13 @@ class TelaTesteTTDE(Screen):
                 apagar_widget_id = self.ids._smile1
                 self.desaparecer_smile(apagar_widget_id)
         else:
-            logging.debug('show_smile: smile doesn\'t show for Test TT'.format())
+            logging.debug('show_smile: smile doesn\'t show for Test TT, but the block time is the same'.format())
+            Clock.schedule_once(self.schedule_time, self.timeout_screen_block)
             self.incrementa_acerto()
             self.screen_blocked = True
+
+    def schedule_time(self, delta):
+        pass
 
     def desaparecer_smile(self, apagar_widget_id):
         logging.debug('desaparecer_smile: smile a ser retirado wis={}'.format(apagar_widget_id))

@@ -14,6 +14,8 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.image import Image
 from kivy.uix.label import Label
 from kivy.uix.screenmanager import ScreenManager, Screen
+from kivy.uix.filechooser import FileChooserListView
+from kivy.utils import platform
 
 from elements import resultlog
 from elements.attemptlog import AttemptLog
@@ -33,15 +35,14 @@ from elements.elements import SourcePicture, TargetPicture, Imagem
 from telas.telaVisualizar import TelaVisualizar
 import itertools
 import hashlib
-# import xlsxwriter
-
-from utils.screen_combinations import preparar_combinacoes
+from kivy import platform
+from android.permissions import request_permissions, Permission
 
 width = 1200
 height = 1920
 
 Window.size = (width, height)
-Window.clearcolor = (1, 1, 1, 1)
+Window.clearcolor = (0, 0, 0, 0)
 
 
 class GerenciadorDeTelas(ScreenManager):
@@ -355,7 +356,9 @@ class GerenciadorDeTelas(ScreenManager):
     def finalizar_result_file(self):
         self.result_log.finalyze_resultlog()
         ResultLog.write_result_file(self.result_log)
-        self.result_log_human = ResultLog.generate_human_report(self.result_log)
+        rl = ResultLog.generate_human_report(self.result_log)
+        rl = rl + "\nFilePath: "+ os.path.realpath(self.result_log.filename + '.human.txt')
+        self.result_log_human = rl
         with open(self.result_log.filename + '.human.txt', 'w') as human_file:
             human_file.write(self.result_log_human)
         print(self.result_log_human)
@@ -538,11 +541,37 @@ class GerenciadorDeTelas(ScreenManager):
         self.transition.direction = 'left'
 
 
+    # def check_permissions(self, perms):
+    #     for perm in perms:
+    #         if self.check_permission(perm) != True:
+    #             return False
+    #     return True
+
+    # def save_file(self, folder, filename, content_file):
+    #     print("started savefile")
+    #     perms = [Permission.WRITE_EXTERNAL_STORAGE, Permission.READ_EXTERNAL_STORAGE]
+    #     if self.check_permissions(perms) != True:
+    #         request_permissions(perms)
+    #         print("No permissions to write storage!!! Exiting!")
+    #         exit()
+    #     external_path = os.getenv('EXTERNAL_STORAGE')
+    #     full_file_path = os.path.join(external_path, "pesquisa-thais", folder)
+    #     if not os.path.exists(full_file_path):
+    #         os.mkdir(full_file_path)
+    #     full_file_path = os.path.join(full_file_path, filename)
+    #     with open(full_file_path, 'w', encoding='utf-8') as w:
+    #         w.write(content_file)
+    #         print("File '"+ full_file_path +"' have written with content: \n" + content_file)
+
 class Main(App):
 
     def build(self):
-        self.title = 'TRTT'
+        # if platform == "android":
+        #     perms = [Permission.WRITE_EXTERNAL_STORAGE, Permission.READ_EXTERNAL_STORAGE]
+        #     request_permissions(perms)
+            # print("Permissions OK!!!")
+        # self.save_file("test", "test-permissions.txt", "permissions validated!!")
+        self.title = 'MTS-TRTT'
         return GerenciadorDeTelas()
 
-
-Main().run()
+Main.run()
