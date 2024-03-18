@@ -33,7 +33,11 @@ from elements.elements import SourcePicture, TargetPicture, Imagem
 from telas.telaVisualizar import TelaVisualizar
 import itertools
 import hashlib
-# import xlsxwriter
+from kivy.utils import platform
+from android.permissions import request_permissions, Permission, check_permission
+if platform == "android":
+    perms = [Permission.WRITE_EXTERNAL_STORAGE, Permission.READ_EXTERNAL_STORAGE]
+    request_permissions(perms)
 
 from utils.screen_combinations import preparar_combinacoes
 
@@ -356,9 +360,22 @@ class GerenciadorDeTelas(ScreenManager):
         self.result_log.finalyze_resultlog()
         ResultLog.write_result_file(self.result_log)
         self.result_log_human = ResultLog.generate_human_report(self.result_log)
-        with open(self.result_log.filename + '.human.txt', 'w') as human_file:
-            human_file.write(self.result_log_human)
-        print(self.result_log_human)
+        self.save_human_report(self.result_log.participant, self.result_log.filename + ".txt", self.result_log_human)
+
+    def save_human_report(self, folder, filename, content_file):
+        logging.debug('save_human_report: saving human report')
+        external_path = os.getenv('EXTERNAL_STORAGE')
+        full_file_path = os.path.join(external_path, "pesquisa-thais")
+        if not os.path.exists(full_file_path):
+            os.mkdir(full_file_path)
+        full_file_path = os.path.join(full_file_path, folder)
+        if not os.path.exists(full_file_path):
+            os.mkdir(full_file_path)
+        full_file_path = os.path.join(full_file_path, filename)
+        with open(full_file_path, 'w', encoding='utf-8') as w:
+            w.write(content_file)
+            print("File '" + full_file_path + "' have written with content: \n" + content_file)
+        self.result_log_human += "\n\n" + full_file_path
 
     def generate_next_tela(self, proxima):
         logging.debug('generate_next_tela: next tela {}'.format(proxima))
@@ -536,6 +553,12 @@ class GerenciadorDeTelas(ScreenManager):
                 self.remove_tela(screen)
         self.current = 'menu'
         self.transition.direction = 'left'
+
+# def check_permissions(perms):
+#     for perm in perms:
+#         if check_permission(perm) != True:
+#             return False
+#     return True
 
 
 class Main(App):

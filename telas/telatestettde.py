@@ -188,7 +188,7 @@ class TelaTesteTTDE(Screen):
                 apagar_widget_id = self.ids._smile1
                 self.desaparecer_smile(apagar_widget_id)
         else:
-            logging.debug('show_smile: smile doesn\'t show for Test TT'.format())
+            logging.debug('show_smile: smile doesn\'t show for Test TT, but the block time is the same'.format())
             self.incrementa_acerto()
             self.screen_blocked = True
 
