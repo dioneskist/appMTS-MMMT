@@ -7,11 +7,12 @@ class TelaInstrucoes(Screen):
     def on_enter(self):
         if 'TT' in self.manager.letters:
             self.ids._instrucoes.text = """
-Aparecerão figuras na tela. Você deve tocar sobre a figura à esquerda e arrastá-la até um dos retângulos com bordas cinza à direita. Cada figura à esquerda possui um par à direita. Dessa vez não haverá smiles indicando se você acertou ou não. Quando as tarefas terminarem, você será informado pelo programa.
+Continue fazendo como você aprendeu. Agora a carinha feliz não aparecerá e a figura não voltará para o lugar.
 """
             logging.debug("Instrucoes printadas!!")
         else:
             self.ids._instrucoes.text = """
-Aparecerão figuras na tela. Você deve tocar sobre as figuras à esquerda e arrastá-la até um dos retângulos com bordas cinza à direita. Cada figura à esquerda possui um par à direita. Se você acertar, um smile aparecerá na tela. Quando as tarefas terminarem você será informado pelo programa.
+Cada figura possui um par. Vamos descobrir quais são os pares?
+Arraste e junte as figuras para formar os pares. Quando você acertar, uma carinha feliz aparecerá. Quando você errar, a figura voltará para o lugar.
             """
             logging.debug("Instrucoes printadas!!")
