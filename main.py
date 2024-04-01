@@ -34,8 +34,8 @@ from telas.telaVisualizar import TelaVisualizar
 import itertools
 import hashlib
 from kivy.utils import platform
-from android.permissions import request_permissions, Permission, check_permission
 if platform == "android":
+    from android.permissions import request_permissions, Permission, check_permission
     perms = [Permission.WRITE_EXTERNAL_STORAGE, Permission.READ_EXTERNAL_STORAGE]
     request_permissions(perms)
 

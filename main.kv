@@ -138,9 +138,10 @@
         Label:
             id: _instrucoes
             text: 'Instruções serão escritas aqui'
-            size_hint_y: None
-            height: self.texture_size[1]
-            text_size: self.width, None
+            valign: 'middle'
+            halign: 'justify'
+            font_size: '50sp'
+            text_size: self.size
             color: 0,0,0,1
         MyButton:
             text: 'Iniciar'
