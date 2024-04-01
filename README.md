@@ -52,10 +52,10 @@ Tips for you Linux and Pycham lover running Linux on WSL:
     - `.\env-win\Scripts\activate`
     - `python.exe -m pip install -r requirements.txt`
 2. Deploy android app from WSL to device connected on Windows:
-  - Necessário que o comando adb executado seja o executável windows e não o adb do linux (ver [aqui](https://stackoverflow.com/questions/60166965/adb-device-list-empty-using-wsl2))
-    - Crie um link para alterar o adb chamado para o adb do windows:
-      - `ln -s /mnt/e/projetos/tools/platform-tools/adb.exe /home/dione/.buildozer/android/platform/android-sdk/platform-tools/adb`
-      - agora só rodar so coamndos:
+  - ABD tool have to run on Windows event the compilation is running on linux WSL (ver [aqui](https://stackoverflow.com/questions/60166965/adb-device-list-empty-using-wsl2))
+    - Create a symbolic link from buildozer adb to adb installed on windows:
+      - `ln -s /mnt/d/projetos/tools/platform-tools/adb.exe /home/dione/.buildozer/android/platform/android-sdk/platform-tools/adb`
+      - run the following commands:
       1. build `buildozer android debug deploy`
       2. build, deploy and run `buildozer android debug deploy run`
       3. run with debug enabled `buildozer android debug run logcat`
