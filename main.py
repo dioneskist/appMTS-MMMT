@@ -14,7 +14,7 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.image import Image
 from kivy.uix.label import Label
 from kivy.uix.screenmanager import ScreenManager, Screen
-
+from kivy.lang import Builder
 from elements import resultlog
 from elements.attemptlog import AttemptLog
 from elements.resultlog import ResultLog
@@ -35,8 +35,9 @@ import itertools
 import hashlib
 from kivy.utils import platform
 if platform == "android":
-    from android.permissions import request_permissions, Permission, check_permission
-    perms = [Permission.WRITE_EXTERNAL_STORAGE, Permission.READ_EXTERNAL_STORAGE]
+    from android.permissions import request_permissions, Permission
+    from android.storage import primary_external_storage_path
+    perms = [Permission.WRITE_EXTERNAL_STORAGE]
     request_permissions(perms)
 
 from utils.screen_combinations import preparar_combinacoes
@@ -46,6 +47,7 @@ height = 1920
 
 Window.size = (width, height)
 Window.clearcolor = (1, 1, 1, 1)
+Window.fullscreen = True
 
 
 class GerenciadorDeTelas(ScreenManager):
@@ -364,13 +366,18 @@ class GerenciadorDeTelas(ScreenManager):
 
     def save_human_report(self, folder, filename, content_file):
         logging.debug('save_human_report: saving human report')
-        external_path = os.getenv('EXTERNAL_STORAGE')
-        full_file_path = os.path.join(external_path, "pesquisa-thais")
+        external_path = primary_external_storage_path()
+        full_file_path = os.path.join(external_path, "Documents")
+        full_file_path = os.path.join(full_file_path, "pesquisa-thais")
         if not os.path.exists(full_file_path):
+            logging.debug('save_human_report: created: ' + str(full_file_path))
             os.mkdir(full_file_path)
+        logging.debug('save_human_report: directory: ' + str(full_file_path) + ' exits.')
         full_file_path = os.path.join(full_file_path, folder)
         if not os.path.exists(full_file_path):
+            logging.debug('save_human_report: created: ' + str(full_file_path))
             os.mkdir(full_file_path)
+        logging.debug('save_human_report: directory: ' + str(full_file_path) + ' exits.')
         full_file_path = os.path.join(full_file_path, filename)
         with open(full_file_path, 'w', encoding='utf-8') as w:
             w.write(content_file)
@@ -435,7 +442,6 @@ class GerenciadorDeTelas(ScreenManager):
             return tela
 
     def troca_tela(self):
-
         """
 
         Sempre sera validada se o numero total de acertos foi atingido (18)
@@ -554,11 +560,6 @@ class GerenciadorDeTelas(ScreenManager):
         self.current = 'menu'
         self.transition.direction = 'left'
 
-# def check_permissions(perms):
-#     for perm in perms:
-#         if check_permission(perm) != True:
-#             return False
-#     return True
 
 
 class Main(App):

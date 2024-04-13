@@ -1,10 +1,9 @@
-kivy==2.2.1
-kivymd==1.1.1
+kivy==2.3.0
+kivymd==1.2.0
 kaki==0.1.8
 watchdog==3.0.0
 pytest==7.4.2
 coverage==7.3.1
-xlsxwriter==3.1.9
 buildozer==1.5.0
 Cython==0.29.33
-python-for-android==v2022.12.20 #https://python-for-android.readthedocs.io/en/v2022.12.20/quickstart/
+python-for-android==v2024.1.21 #https://python-for-android.readthedocs.io/en/v2022.12.20/quickstart/
