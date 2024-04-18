@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 from elements.attempt import Attempt
 from elements.enum.hiterror import HitError
-from elements.modelMMMT import ModelMMMT
+
 
 @dataclass
 class AttemptLog:
@@ -15,8 +15,7 @@ class AttemptLog:
     attempts_total = 0
     attempts_total_until_condition = 0
 
-    attemptMM: ModelMMMT()
-    attemptMT: ModelMMMT()
+    attempts:  []
 
     @classmethod
     def generate_attempts_total(cls, attempts):
