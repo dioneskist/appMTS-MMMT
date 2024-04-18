@@ -5,7 +5,7 @@ import time
 from datetime import datetime
 from elements.attempt import Attempt
 from elements.attemptlog import AttemptLog
-
+import os
 
 def attempts2csv(attempts):
     ret = ''
@@ -76,9 +76,10 @@ class ResultLog:
 
 
     @classmethod
-    def write_result_file(cls, result_log_obj):
+    def write_result_file(cls, result_log_obj, folder):
         result_log_obj.generate_filename()
-        with open(result_log_obj.filename, 'wb') as f:
+        final_folder = os.path.join(folder, result_log_obj.filename)
+        with open(final_folder, 'wb') as f:
             f.write(pickle.dumps(result_log_obj))
 
     @classmethod

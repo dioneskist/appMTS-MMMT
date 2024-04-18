@@ -360,11 +360,10 @@ class GerenciadorDeTelas(ScreenManager):
 
     def finalizar_result_file(self):
         self.result_log.finalyze_resultlog()
-        ResultLog.write_result_file(self.result_log)
         self.result_log_human = ResultLog.generate_human_report(self.result_log)
-        self.save_human_report(self.result_log.participant, self.result_log.filename + ".txt", self.result_log_human)
+        self.save_reports(self.result_log.participant, self.result_log.filename + ".txt", self.result_log_human)
 
-    def save_human_report(self, folder, filename, content_file):
+    def save_reports(self, folder, filename, content_file):
         logging.debug('save_human_report: saving human report')
         external_path = ""
         full_file_path = ""
@@ -381,11 +380,12 @@ class GerenciadorDeTelas(ScreenManager):
             logging.debug('save_human_report: created: ' + str(full_file_path))
             os.mkdir(full_file_path)
         logging.debug('save_human_report: directory: ' + str(full_file_path) + ' exits.')
-        full_file_path = os.path.join(full_file_path, filename)
-        with open(full_file_path, 'w', encoding='utf-8') as w:
+        full_file_path_final = os.path.join(full_file_path, filename)
+        with open(full_file_path_final, 'w', encoding='utf-8') as w:
             w.write(content_file)
-            print("File '" + full_file_path + "' have written with content: \n" + content_file)
-        self.result_log_human += "\n\n" + full_file_path
+            print("File '" + full_file_path_final + "' have written with content: \n" + content_file)
+        self.result_log_human += "\n\n" + full_file_path_final
+        ResultLog.write_result_file(self.result_log, full_file_path)
 
     def generate_next_tela(self, proxima):
         logging.debug('generate_next_tela: next tela {}'.format(proxima))
