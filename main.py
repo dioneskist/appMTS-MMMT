@@ -366,8 +366,11 @@ class GerenciadorDeTelas(ScreenManager):
 
     def save_human_report(self, folder, filename, content_file):
         logging.debug('save_human_report: saving human report')
-        external_path = primary_external_storage_path()
-        full_file_path = os.path.join(external_path, "Documents")
+        external_path = ""
+        full_file_path = ""
+        if platform == "android":
+            external_path = primary_external_storage_path()
+            full_file_path = os.path.join(external_path, "Documents")
         full_file_path = os.path.join(full_file_path, "pesquisa-thais")
         if not os.path.exists(full_file_path):
             logging.debug('save_human_report: created: ' + str(full_file_path))
