@@ -8,10 +8,11 @@ Nota 1. Este software foi construído utilizando com objetivo de ser utilizado e
 
 
 ## Como install/rodar no Linux (WSL)
-1. Clonar este repo `git clone git@github.com:dioneskist/appMTS-MMMT.git`
-2. Instalar o python: `sudo apt install -y python3`
-3. Instalar as dependências: `python -m ensurepip --upgrade;pip3 install -r requirements.txt`
-4. Rodar o projeto: `python3 main.py`
+1. Clonar este repo `git clone https://github.com/dioneskist/pareamentos.git`
+2. Instalar o python, pip e dependencies: `sudo apt update; sudo apt install -y python3 python3-pip libmtdev-dev libgl1-mesa-glx xclip`
+3. Instalar virtualenv `sudo apt install python3-venv; python3 -m venv .venv; source .venv/bin/activate` (Opcional)
+4. Instalar as dependências:  `cd pareamentos; pip3 install -r requirements.txt`
+5. Rodar o projeto: `python3 main.py`
 
 Nota 2. Use o python virtual-env para isolar seu ambiente de desenvolvimento
 
