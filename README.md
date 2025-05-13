@@ -9,10 +9,10 @@ Note 1. This software was built with the aim of being used on a mobile device wi
 
 
 ## How to install/run on Linux (WSL)
-1. Clone this repo `git clone https://github.com/dioneskist/appMTS-MMMT.git`
+1. Clone this repo `git clone https://github.com/dioneskist/pareamentos.git`
 2. Install python and pip and so dependencies: `sudo apt update; sudo apt install -y python3 python3-pip libmtdev-dev libgl1-mesa-glx xclip`
 3. Install virtualenv `sudo apt install python3-venv; python3 -m venv .venv; source .venv/bin/activate` (Optional)
-4. Install the dependencies: `cd appMTS-MMMT; pip3 install -r requirements.txt`
+4. Install the dependencies: `cd pareamentos; pip3 install -r requirements.txt`
 4. Run the project: `python3 main.py`
 
 Note 2. Use python virtual-env to isolate your development environment
