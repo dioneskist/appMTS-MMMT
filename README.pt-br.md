@@ -33,7 +33,7 @@ Instale os requisitos e execute a depuração
 
 ### Etapas para executar o Kivy desenvolvido para Android
 1. `source .venv/bin/ativar`
-2. `buildozer depuração do Android`
+2. `buildozer android debug`
 3. Implante o aplicativo no dispositivo `buildozer android run debug`
 
 Dicas para você amante de Linux e Pycham rodando Linux no WSL:
@@ -47,7 +47,7 @@ Dicas para você amante de Linux e Pycham rodando Linux no WSL:
     -Windows (PowerShell):
       - `py -m venv env-win`
       - `.\env-win\Scripts\activate`
-      - `python.exe -m pip install -r requisitos.txt`
+      - `python.exe -m pip install -r requirements.txt`
 2. Implante o aplicativo Android do WSL no dispositivo conectado no Windows:
     - O comando adb executado deve ser o executável do Windows e não o adb do Linux (veja [aqui](https://stackoverflow.com/questions/60166965/adb-device-list-empty-using-wsl2))
     - Crie um link para alterar o adb chamado para o adb do windows:
