@@ -1,10 +1,10 @@
 [app]
 
 # (str) Title of your application
-title = mts-MMMT - Doutoranda Thaís
+title = Pareamentos
 
 # (str) Package name
-package.name = mtsmmmt
+package.name = pareamentos
 
 # (str) Package domain (needed for android/ios packaging)
 package.domain = br.com.dsk
